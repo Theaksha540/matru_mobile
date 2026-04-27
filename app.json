@@ -1,14 +1,13 @@
 {
   "expo": {
-    "name": "matru-saathi-mobile",
-    "slug": "matru-saathi-mobile",
-    "version": "1.0.0",
+    "name": "Nirikhyana Puri",
+    "slug": "NIRIKHYANA-PURI",
+    "version": "2.3.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/image/Nirikhyana_Puri_Icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/image/Nirikhyana_Puri_Icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,13 +16,62 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/image/Nirikhyana_Puri_Icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "package": "com.akshay1998.NIRIKHYANAPURI",
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/NIRIKHYANA_PURI_LOGO2-removebg-preview.png"
+    },
+    "plugins": [
+      "@react-native-community/datetimepicker",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
+      "expo-updates",
+      "expo-sqlite",
+      "expo-secure-store",
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow access to save and upload files",
+          "savePhotosPermission": "Allow access to save files",
+          "isAccessMediaLocationEnabled": false,
+          "granularPermissions": [
+            "photo",
+            "video"
+          ],
+          "androidPermissions": [
+            "READ_MEDIA_IMAGES",
+            "READ_MEDIA_VIDEO"
+          ]
+        }
+      ],
+      "expo-web-browser"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "7888cef2-0f6b-4ece-a755-d299112c2493"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7888cef2-0f6b-4ece-a755-d299112c2493"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
