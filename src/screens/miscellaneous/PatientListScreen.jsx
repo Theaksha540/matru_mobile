@@ -73,13 +73,67 @@ const PatientListScreen = ({ navigation, route }) => {
     }
   };
 
+  const normalizeReferralResponse = (data) => {
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.items)) return data.items;
+    if (Array.isArray(data?.results)) return data.results;
+    return [];
+  };
+
+  const mergeReferralsById = (...referralGroups) => {
+    const merged = [];
+    const seen = new Set();
+
+    referralGroups.flat().forEach((referral) => {
+      if (!referral) return;
+      const key = String(
+        referral?.id ??
+        `${referral?.pregnant_woman_id || 'unknown'}_${referral?.status || 'unknown'}_${referral?.dp_id || 'unknown'}`
+      );
+
+      if (seen.has(key)) {
+        return;
+      }
+
+      seen.add(key);
+      merged.push(referral);
+    });
+
+    return merged;
+  };
+
+  const isOfflineOnlyPatientId = (value) =>
+    typeof value === 'string' && value.trim().toLowerCase().startsWith('offline_');
+
+  const findActiveReferralForPatient = (referrals, patientId) => {
+    const activeStatuses = ['pending', 'accepted', 're_referred'];
+    return (Array.isArray(referrals) ? referrals : []).find((ref) => (
+      String(ref?.pregnant_woman_id) === String(patientId) &&
+      activeStatuses.includes(ref?.status?.toLowerCase())
+    ));
+  };
+
   const loadActiveReferrals = async () => {
     try {
-      const allReferrals = await syncService.getDeliveryReferrals();
-      const referralsList = Array.isArray(allReferrals) ? allReferrals : [];
+      const [allReferrals, pendingReferrals, acceptedReferrals, reReferredReferrals] = await Promise.all([
+        syncService.getDeliveryReferrals(),
+        syncService.getDeliveryReferrals('pending'),
+        syncService.getDeliveryReferrals('accepted'),
+        syncService.getDeliveryReferrals('re_referred'),
+      ]);
+
+      const referralsList = mergeReferralsById(
+        normalizeReferralResponse(allReferrals),
+        normalizeReferralResponse(pendingReferrals),
+        normalizeReferralResponse(acceptedReferrals),
+        normalizeReferralResponse(reReferredReferrals)
+      );
+
       const activeStatuses = ['pending', 'accepted', 're_referred'];
       const activeReferrals = referralsList.filter(ref => activeStatuses.includes(ref.status?.toLowerCase()));
-      setPatientsWithActiveReferrals(new Set(activeReferrals.map(ref => ref.pregnant_woman_id)));
+      const blockedPatientIds = activeReferrals.map(ref => ref.pregnant_woman_id);
+
+      setPatientsWithActiveReferrals(new Set(blockedPatientIds));
     } catch (error) {
       console.error('Error loading active referrals:', error);
       setPatientsWithActiveReferrals(new Set());
@@ -203,7 +257,7 @@ const PatientListScreen = ({ navigation, route }) => {
     }
   };
 
-  const handlePatientSelect = (patient) => {
+  const handlePatientSelect = async (patient) => {
     if (isCreateReferralMode) {
       if (!isPatientApproved(patient)) {
         Alert.alert(
@@ -211,6 +265,44 @@ const PatientListScreen = ({ navigation, route }) => {
           'This beneficiary is not approved yet. Please approve first before creating a delivery referral.'
         );
         return;
+      }
+
+      if (patientsWithActiveReferrals.has(patient.id)) {
+        Alert.alert(
+          t('error'),
+          'An active delivery referral already exists for this beneficiary.'
+        );
+        return;
+      }
+
+      if (isOnline && !isOfflineOnlyPatientId(patient?.id)) {
+        try {
+          const { deliveryReferralAPI } = await import('../../services/api');
+          const patientReferralsResponse = await deliveryReferralAPI.getAll({
+            pregnant_woman_id: patient.id,
+          });
+          const patientReferrals = normalizeReferralResponse(patientReferralsResponse);
+          const matchedActiveReferral = findActiveReferralForPatient(patientReferrals, patient.id);
+
+          if (matchedActiveReferral) {
+            Alert.alert(
+              t('error'),
+              'An active delivery referral already exists for this beneficiary. Please open the existing referral instead of creating a new one.',
+              [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                  text: 'View Referral',
+                  onPress: () => navigation.navigate('ReferralDetail', {
+                    referralId: matchedActiveReferral.id,
+                  }),
+                },
+              ]
+            );
+            return;
+          }
+        } catch (error) {
+          console.error('[CreateReferral] Patient-specific referral check failed:', error);
+        }
       }
       
       navigation.navigate('ANCTracking', { 

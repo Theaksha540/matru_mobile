@@ -188,8 +188,13 @@ const ReReferScreen = ({ navigation, route }) => {
   }, [allDeliveryPoints, userInfo, referral]);
 
   useEffect(() => {
-    if (selectedDP && isCurrentDeliveryPoint(selectedDP)) {
-      setSelectedDP(null);
+    if (selectedDP || allDeliveryPoints.length === 0) {
+      return;
+    }
+
+    const matchedCurrentDP = allDeliveryPoints.find((dp) => isCurrentDeliveryPoint(dp));
+    if (matchedCurrentDP) {
+      setSelectedDP(matchedCurrentDP);
     }
   }, [selectedDP, userInfo, referral, allDeliveryPoints]);
 

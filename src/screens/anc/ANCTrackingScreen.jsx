@@ -62,6 +62,31 @@ const ANCTrackingScreen = ({ route, navigation }) => {
   const [dpSearchQuery, setDpSearchQuery] = useState('');
   const supportedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
 
+  const currentDPDisplayName =
+    userInfo?.dp_name ||
+    userInfo?.delivery_point_name ||
+    userInfo?.deliveryPointName ||
+    userInfo?.delivery_point?.name ||
+    userInfo?.deliveryPoint?.name ||
+    '';
+
+  const currentDPId =
+    userInfo?.dp_id ||
+    userInfo?.delivery_point_id ||
+    userInfo?.deliveryPointId ||
+    userInfo?.delivery_point?.id ||
+    userInfo?.deliveryPoint?.id ||
+    null;
+
+  const getLoggedInDPName = (info = userInfo) => (
+    info?.dp_name ||
+    info?.delivery_point_name ||
+    info?.deliveryPointName ||
+    info?.delivery_point?.name ||
+    info?.deliveryPoint?.name ||
+    ''
+  );
+
   const isPatientApproved = (patientData) => {
     if (patientData?.is_self_registered === false) {
       return true;
@@ -77,6 +102,9 @@ const ANCTrackingScreen = ({ route, navigation }) => {
     }
     return false;
   };
+
+  const isOfflineOnlyPatientId = (value) =>
+    typeof value === 'string' && value.trim().toLowerCase().startsWith('offline_');
 
   const handleGoHome = () => {
     const roleRouteMap = {
@@ -393,6 +421,14 @@ const ANCTrackingScreen = ({ route, navigation }) => {
       const resolvedUserInfo = userInfo || await secureStorage.getItem('user_info');
       const resolvedPatient = patient?.id ? patient : (patientData || {});
       const isSubCentreUser = resolvedUserInfo?.role === 'sub_centre';
+      const isDPUser = resolvedUserInfo?.role === 'dp';
+      const resolvedCurrentDPId =
+        resolvedUserInfo?.dp_id ||
+        resolvedUserInfo?.delivery_point_id ||
+        resolvedUserInfo?.deliveryPointId ||
+        resolvedUserInfo?.delivery_point?.id ||
+        resolvedUserInfo?.deliveryPoint?.id ||
+        currentDPId;
 
       const blockId =
         resolvedUserInfo?.block_id ||
@@ -408,7 +444,7 @@ const ANCTrackingScreen = ({ route, navigation }) => {
 
       let data = [];
 
-      if (isSubCentreUser) {
+      if (isSubCentreUser || isDPUser) {
         data = await syncService.getDeliveryPoints();
       } else if (blockId) {
         data = await syncService.getDeliveryPoints({ block_id: blockId });
@@ -422,7 +458,19 @@ const ANCTrackingScreen = ({ route, navigation }) => {
         data = await syncService.getDeliveryPoints();
       }
 
-      setDeliveryPoints(Array.isArray(data) ? data : []);
+      const normalizedDeliveryPoints = Array.isArray(data) ? data : [];
+      setDeliveryPoints(normalizedDeliveryPoints);
+
+      if (resolvedUserInfo?.role === 'dp' && !selectedDP) {
+        const matchedCurrentDP = normalizedDeliveryPoints.find((dp) => {
+          const dpId = dp?.id ?? dp?.dp_id;
+          return dpId !== undefined && dpId !== null && String(dpId) === String(resolvedCurrentDPId);
+        });
+
+        if (matchedCurrentDP) {
+          setSelectedDP(matchedCurrentDP.id ?? matchedCurrentDP.dp_id);
+        }
+      }
     } catch (error) {
       console.error('Error loading delivery points:', error);
       setDeliveryPoints([]);
@@ -432,6 +480,7 @@ const ANCTrackingScreen = ({ route, navigation }) => {
   const handleOpenReferralModal = async () => {
     try {
       setLoading(true);
+      const resolvedUserInfo = userInfo || await secureStorage.getItem('user_info');
       const currentPatientId = patient?.id || patientId || patientData?.id;
       if (!currentPatientId) {
         Alert.alert(t('error'), 'Patient information not available. Please refresh.');
@@ -448,7 +497,7 @@ const ANCTrackingScreen = ({ route, navigation }) => {
         String(ref?.pregnant_woman_id) === String(currentPatientId)
       );
       
-      console.log('Patient referrals in modal:', patientReferrals);
+      
       
       // Filter for active statuses (pending, accepted, re_referred)
       const activeStatuses = ['pending', 'accepted', 're_referred'];
@@ -478,7 +527,7 @@ const ANCTrackingScreen = ({ route, navigation }) => {
               text: 'View Referral', 
               style: 'default',
               onPress: () => {
-                console.log('Navigating to ReferralDetail with ID:', hasActiveReferral.id);
+                
                 navigation.navigate('ReferralDetail', { 
                   referralId: hasActiveReferral.id,
                   referralData: hasActiveReferral,
@@ -492,6 +541,7 @@ const ANCTrackingScreen = ({ route, navigation }) => {
       
       // No active referral, proceed to open modal
       await loadDeliveryPoints();
+      setDpSearchQuery('');
       setShowReferralModal(true);
     } catch (error) {
       console.error('Error checking existing referrals:', error);
@@ -507,6 +557,7 @@ const ANCTrackingScreen = ({ route, navigation }) => {
             style: 'default',
             onPress: async () => {
               await loadDeliveryPoints();
+              setDpSearchQuery('');
               setShowReferralModal(true);
             }
           }
@@ -541,6 +592,14 @@ const ANCTrackingScreen = ({ route, navigation }) => {
 
       if (!currentPatientId) {
         Alert.alert(t('error'), 'Patient information not available. Please refresh.');
+        return;
+      }
+
+      if (isOfflineOnlyPatientId(currentPatientId)) {
+        Alert.alert(
+          t('error'),
+          'This patient registration is not synced yet. Please sync the beneficiary first, then create the delivery referral.'
+        );
         return;
       }
       
@@ -604,11 +663,27 @@ const ANCTrackingScreen = ({ route, navigation }) => {
       );
     } catch (error) {
       console.error('Error creating referral:', error);
-      
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.message ||
-                          'Failed to create delivery referral. Please try again.';
-      
+
+      const errorStatus = error?.response?.status;
+      const errorDetail = error?.response?.data?.detail;
+      const errorMessage =
+        errorDetail ||
+        error?.response?.data?.message ||
+        'Failed to create delivery referral. Please try again.';
+
+      if (
+        errorStatus === 409 &&
+        typeof errorDetail === 'string' &&
+        errorDetail.toLowerCase().includes('active referral')
+      ) {
+        await checkActiveReferral();
+        Alert.alert(
+          t('error'),
+          'An active delivery referral already exists for this beneficiary. Please open the existing referral instead of creating a new one.'
+        );
+        return;
+      }
+
       Alert.alert(t('error'), errorMessage);
     } finally {
       setSubmitting(false);
@@ -1242,7 +1317,7 @@ const ANCTrackingScreen = ({ route, navigation }) => {
                     ]}
                     onPress={hasActiveReferral ? () => {
                       if (activeReferralInfo) {
-                        console.log('View Referral button clicked - Referral ID:', activeReferralInfo.id);
+                        
                         navigation.navigate('ReferralDetail', { 
                           referralId: activeReferralInfo.id,
                           referralData: activeReferralInfo,
@@ -1341,7 +1416,11 @@ const ANCTrackingScreen = ({ route, navigation }) => {
                     <Search size={18} color="#6b7280" style={styles.searchIcon} />
                     <TextInput
                       style={styles.searchInput}
-                      placeholder="Search delivery points..."
+                      placeholder={
+                        currentDPDisplayName
+                          ? `Current DP: ${currentDPDisplayName}`
+                          : 'Search delivery points...'
+                      }
                       placeholderTextColor="#9ca3af"
                       value={dpSearchQuery}
                       onChangeText={setDpSearchQuery}
