@@ -1,7 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 const getStoredLanguage = async () => {
   try {
     const savedLanguage = await AsyncStorage.getItem('selectedLanguage');
@@ -10,7 +9,6 @@ const getStoredLanguage = async () => {
     return 'en';
   }
 };
-
 const resources = {
   en: {
     translation: {
@@ -33,7 +31,6 @@ const resources = {
       "loginFailed": "Login Failed",
       "invalidCredentials": "Invalid credentials",
       "pleaseEnterCredentials": "Please enter both username and password",
-      
       // Dashboard Common
       "districtDashboard": "District Dashboard",
       "dpDashboard": "DP Dashboard",
@@ -41,7 +38,6 @@ const resources = {
       "subCentreDashboard": "Sub-Centre Dashboard",
       "usgDashboard": "USG Dashboard",
       "motherDashboard": "Mother Dashboard",
-      
       // Roles
       "districtHealthOfficer": "District Health Officer",
       "dpOfficer": "DP Officer",
@@ -49,7 +45,6 @@ const resources = {
       "subCentreOfficer": "Sub-Centre Health Worker",
       "usgOperator": "USG Operator",
       "mother": "Mother",
-      
       // KPIs
       "totalBlocks": "Total Blocks",
       "usgCompletion": "USG Completion",
@@ -60,7 +55,6 @@ const resources = {
       "totalDPs": "Total DPs",
       "downloadDPReport": "Download DP Report",
       "preparingDPReport": "Preparing DP Report...",
-      
       // Actions
       "registerPregnancy": "Register Pregnancy",
       "updateANCVisit": "Update ANC Visit",
@@ -75,7 +69,6 @@ const resources = {
       "bulkUpload": "Bulk Upload RCH Excel",
       "deduplicationCheck": "Deduplication Check",
       "grievanceHandling": "Grievance Handling",
-      
       // Subtitles
       "newRegistration": "New registration",
       "recordVisitDetails": "Record visit details",
@@ -91,8 +84,7 @@ const resources = {
       "viewResolveIssues": "View & resolve issues",
       "monitorCriticalCases": "Monitor critical cases",
       "analyticsExports": "Analytics & exports",
-      "deliveryPointAnalytics": "Delivery point analytics",
-      
+      "deliveryPointAnalytics": "DP referral analytics",
       // Messages
       "criticalRule": "Critical Rule:",
       "followUpHighRisk24h": "Follow up all high-risk cases within 24 hours",
@@ -107,11 +99,9 @@ const resources = {
       "reReferred": "Re-referred",
       "acceptedRate": "Accepted Rate",
       "reReferralRate": "Re-referral Rate",
-      
       // Stats Labels
       "total": "Total",
       "ancRate": "ANC Rate",
-      
       // Additional translations for examples and common usage
       "confirmation": "Confirmation",
       "areYouSure": "Are you sure?",
@@ -127,7 +117,6 @@ const resources = {
       "noDataFound": "No data found",
       "addItemsToGetStarted": "Add items to get started",
       "exampleNote": "This is an example of how to implement multilanguage support in all screens.",
-      
       // Self Registration & Guest Services
       "guestUserServices": "Guest User Services",
       "selfRegister": "Self Register",
@@ -138,7 +127,6 @@ const resources = {
       "selectBlock": "Select Block",
       "selectDistrict": "Select District",
       "husbandName": "Husband Name",
-      "aadhaarNumber": "Aadhaar Number",
       "dateOfBirth": "Date of Birth",
       "age": "Age",
       "fullAddress": "Full Address",
@@ -159,7 +147,6 @@ const resources = {
       "chooseFileType": "Choose file type",
       "image": "Image",
       "document": "Document (PDF)",
-      
       // Mother Dashboard
       "welcome": "Welcome",
       "yourPregnancy": "Your Pregnancy",
@@ -179,7 +166,6 @@ const resources = {
       "emergencyHelpline": "Emergency Helpline",
       "weeks": "weeks",
       "days": "days",
-      
       // Registration & Forms
       "registerPregnancy": "Register Pregnancy",
       "step1GeneralInfo": "Step 1: General Information",
@@ -192,7 +178,6 @@ const resources = {
       "enterAge": "Enter age",
       "selectDate": "Select date (DD/MM/YYYY)",
       "mobile10Digit": "10-digit mobile",
-      "aadhar12Digit": "12-digit Aadhar",
       "enterRCHID": "Enter RCH ID",
       "enterHPRID": "Enter HPR ID",
       "selectBlockFirst": "Select block first",
@@ -236,6 +221,7 @@ const resources = {
       "ageMustBe18To49": "Age must be between 18 and 49 years",
       "general": "General",
       "pregnancy": "Pregnancy",
+      "review": "Review",
       // ANC & Medical
       "ancTracking": "ANC Tracking",
       "ancVisit": "ANC Visit",
@@ -259,7 +245,6 @@ const resources = {
       "failedToSaveANCVisit": "Failed to save ANC visit",
       "saving": "Saving...",
       "save": "Save",
-      
       // USG Appointments
       "bookUSG": "Book USG",
       "patientDetails": "Patient Details",
@@ -278,11 +263,9 @@ const resources = {
       "pleaseUploadPrescription": "Please upload prescription",
       "usgAppointmentBookedSuccessfully": "USG appointment booked successfully",
       "failedToBookAppointment": "Failed to book appointment",
-      
       // Bulk Upload
       "failedToSelectFile": "Failed to select file",
       "uploadFailed": "Upload failed. Please check file format and data.",
-      
       // Reports
       "reports": "Reports",
       "allReports": "All Reports",
@@ -300,7 +283,6 @@ const resources = {
       "downloadFailed": "Download Failed",
       "sharingNotAvailable": "Sharing is not available on this device",
       "failedToDownloadReport": "Failed to download report",
-      
       // Grievance
       "grievanceHandling": "Grievance Handling",
       "all": "All",
@@ -315,13 +297,11 @@ const resources = {
       "resolutionNotes": "Resolution Notes",
       "enterResolutionDetails": "Enter resolution details and actions taken...",
       "markResolved": "Mark Resolved",
-      
       // Block Reports
       "blockReports": "Block Reports",
       "totalWards": "Total Wards",
       "wardWiseReports": "Ward-wise Reports",
       "wardWiseReportsGenerated": "Ward-wise reports are generated automatically on the 20th of each month",
-      
       // Performance Trends
       "performanceTrends": "Performance Trends",
       "blockWise": "Block-wise",
@@ -341,12 +321,11 @@ const resources = {
       "bestPerforming": "Best Performing",
       "needsAttention": "Needs Attention",
       "mostActive": "Most Active",
-      
       // Appointment Details
       "appointmentDetails": "Appointment Details",
       "appointment": "Appointment",
       "status": "Status",
-      "emergency": "EMERGENCY",
+      "emergency": "Emergency",
       "patientInformation": "Patient Information",
       "appointmentInformation": "Appointment Information",
       "scheduled": "Scheduled",
@@ -357,7 +336,6 @@ const resources = {
       "reportCompleted": "Report Completed",
       "normal": "Normal",
       "failedToLoadAppointmentDetails": "Failed to load appointment details",
-      
       // Grievance Details
       "grievanceDetails": "Grievance Details",
       "grievanceNotFound": "Grievance not found",
@@ -368,7 +346,6 @@ const resources = {
       "timeline": "Timeline",
       "created": "Created",
       "escalatedToDistrict": "Escalated to District",
-      
       // Pending Approvals
       "pendingApprovals": "Pending Approvals",
       "failedToLoadPendingApprovals": "Failed to load pending approvals",
@@ -386,7 +363,6 @@ const resources = {
       "registrationDate": "Registration Date",
       "registrationsPendingApproval": "registration(s) pending approval",
       "noPendingApprovals": "No pending approvals",
-      
       // Deduplication
       "deduplicationCheck": "Deduplication Check",
       "pleaseEnterSearchValue": "Please enter a search value",
@@ -413,7 +389,7 @@ const resources = {
       "sync": "Sync",
       "storedOffline": "Stored offline. Will sync when online.",
       "casesRequireAttention": "cases require immediate attention",
-      "highRisk": "HIGH RISK",
+      "highRisk": "High Risk",
       "warning": "WARNING",
       "age": "AGE",
       "riskFactors": "Risk Factors",
@@ -428,7 +404,6 @@ const resources = {
       "ageUnder20": "Age < 20 years",
       "markedAsHighRisk": "Marked as high risk",
       "riskAssessmentPending": "Risk assessment pending",
-      
       // Patient List & Common
       "selectPatient": "Select Patient",
       "selectPatientForUSG": "Select Patient for USG",
@@ -437,7 +412,6 @@ const resources = {
       "noPatientsFound": "No patients found",
       "mobile": "Mobile",
       "address": "Address",
-      
       // Bulk Upload
       "bulkUploadRCHExcel": "Bulk Upload RCH Excel",
       "uploadBeneficiaryData": "Upload beneficiary data",
@@ -464,7 +438,6 @@ const resources = {
       "systemWillCheckDuplicates": "System will automatically check for duplicates based on ABHA ID and Mobile",
       "invalidDataWillBeFlagged": "Invalid data will be flagged for correction",
       "onlyValidatedRecordsImported": "Only validated records will be imported",
-      
       // Password Management
       "forgotPassword": "Forgot Password",
       "resetPassword": "Reset Password",
@@ -479,7 +452,6 @@ const resources = {
       "resetting": "Resetting",
       "enterCurrentAndNewPassword": "Enter your current password and create a new one",
       "changing": "Changing",
-      
       // Delivery Referrals
       "totalReferrals": "Total Referrals",
       "pendingReferrals": "Pending Referrals",
@@ -489,13 +461,14 @@ const resources = {
       "deliveryReferrals": "Delivery Referrals",
       "recentReferrals": "Recent Referrals",
       "reviewAndAccept": "Review and accept delivery referrals",
+      "searchandrefer":"Search and refer pregnant women for delivery",
       "handleReReferred": "Handle re-referred delivery cases",
       "viewCompleteHistory": "View complete referral history",
       "analyticsAndMetrics": "Analytics and performance metrics",
       "deliveryReports": "Delivery Reports",
       "acceptReferral": "Accept Referral",
       "reReferCase": "Re-refer Case",
-      "reReferReasonOrObservation": "Please provide detailed reason or enter observation notes:",
+      "reReferReasonOrObservation": "Please provide detailed reason",
       "recordOutcome": "Record Outcome",
       "viewAllReferrals": "View All Referrals",
       "noReferralsFound": "No referrals found",
@@ -527,7 +500,6 @@ const resources = {
       "invalidCredentials": "ଅବୈଧ ପ୍ରମାଣପତ୍ର",
       "pleaseEnterCredentials": "ଦୟାକରି ଉପଯୋଗକର୍ତ୍ତା ନାମ ଏବଂ ପାସୱାର୍ଡ ଦିଅନ୍ତୁ",
       "dpDashboard": "ଡିପି ଡ୍ୟାସବୋର୍ଡ",
-      
       // Dashboard Common
       "districtDashboard": "ଜିଲ୍ଲା ଡ୍ୟାସବୋର୍ଡ",
       "blockDashboard": "ବ୍ଲକ ଡ୍ୟାସବୋର୍ଡ",
@@ -535,14 +507,12 @@ const resources = {
       "usgDashboard": "USG ଡ୍ୟାସବୋର୍ଡ",
       "motherDashboard": "ମାତା ଡ୍ୟାସବୋର୍ଡ",
       "dpOfficer": "ଡିପି ଅଫିସର",
-      
       // Roles
       "districtHealthOfficer": "ଜିଲ୍ଲା ସ୍ୱାସ୍ଥ୍ୟ ଅଧିକାରୀ",
       "blockCoordinator": "ବ୍ଲକ ସଂଯୋଜକ",
       "subCentreOfficer": "ସବ୍-ସେଣ୍ଟର ସ୍ୱାସ୍ଥ୍ୟ କର୍ମୀ",
       "usgOperator": "USG ଅପରେଟର",
       "mother": "ମାତା",
-      
       "pendingGrievances": "ଅପେକ୍ଷାରତ ଅଭିଯୋଗ",
       // KPIs
       "totalBlocks": "ମୋଟ ବ୍ଲକ",
@@ -550,7 +520,6 @@ const resources = {
       "pendingVisits": "ବାକି ଭିଜିଟ",
       "highRiskCases": "ଉଚ୍ଚ ବିପଦ ମାମଲା",
       "pendingApprovals": "ବାକି ଅନୁମୋଦନ",
-      
       // Actions
       "registerPregnancy": "ଗର୍ଭଧାରଣ ପଞ୍ଜୀକରଣ",
       "updateANCVisit": "ANC ଭିଜିଟ ଅପଡେଟ କରନ୍ତୁ",
@@ -564,7 +533,6 @@ const resources = {
       "bulkUpload": "ବଲ୍କ ଅପଲୋଡ RCH Excel",
       "deduplicationCheck": "ନକଲ ଯାଞ୍ଚ",
       "grievanceHandling": "ଅଭିଯୋଗ ସମାଧାନ",
-      
       // Subtitles
       "newRegistration": "ନୂତନ ପଞ୍ଜୀକରଣ",
       "recordVisitDetails": "ଭିଜିଟ ବିବରଣୀ",
@@ -580,7 +548,6 @@ const resources = {
       "viewResolveIssues": "ସମସ୍ୟାର ସମାଧାନ",
       "monitorCriticalCases": "ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ ମାମଲା ତଦାରଖ",
       "analyticsExports": "ବିଶ୍ଳେଷଣ ଏବଂ ରପ୍ତାନି",
-      
       // Messages
       "criticalRule": "ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ ନିୟମ:",
       "followUpHighRisk24h": "24 ଘଣ୍ଟା ମଧ୍ୟରେ ସମସ୍ତ ଉଚ୍ଚ ବିପଦ ମାମଲାଗୁଡିକର ଅନୁସରଣ କରନ୍ତୁ",
@@ -591,11 +558,9 @@ const resources = {
       "bulkUploadNote": "ସମସ୍ତ ବଲ୍କ ଅପଲୋଡ ABHA ID ଏବଂ ମୋବାଇଲ ନମ୍ବର ବ୍ୟବହାର କରି ସ୍ୱୟଂଚାଳିତ ଭାବରେ ନକଲ ପାଇଁ ଯାଞ୍ଚ କରାଯିବ।",
       "noBlocksFound": "କୌଣସି ବ୍ଲକ ମିଳିଲା ନାହିଁ",
       "loadingBlocks": "ବ୍ଲକ ଲୋଡ୍ ହେଉଛି...",
-      
       // Stats Labels
       "total": "ମୋଟ",
       "ancRate": "ANC ହାର",
-      
       // Additional translations for examples and common usage
       "confirmation": "ନିଶ୍ଚିତକରଣ",
       "areYouSure": "ଆପଣ ନିଶ୍ଚିତ କି?",
@@ -611,7 +576,6 @@ const resources = {
       "noDataFound": "କୌଣସି ତଥ୍ୟ ମିଳିଲା ନାହିଁ",
       "addItemsToGetStarted": "ଆରମ୍ଭ କରିବା ପାଇଁ ଆଇଟମ୍ ଯୋଗ କରନ୍ତୁ",
       "exampleNote": "ଏହା ସମସ୍ତ ସ୍କ୍ରିନରେ ବହୁଭାଷା ସହାୟତା କିପରି କାର୍ଯ୍ୟକାରୀ କରାଯିବ ତାହାର ଏକ ଉଦାହରଣ।",
-      
       // Self Registration & Guest Services
       "guestUserServices": "ଅତିଥି ଉପଯୋଗକର୍ତ୍ତା ସେବା",
       "selfRegister": "ସ୍ୱୟଂ ପଞ୍ଜୀକରଣ",
@@ -622,7 +586,6 @@ const resources = {
       "selectBlock": "ବ୍ଲକ ବାଛନ୍ତୁ",
       "selectDistrict": "ଜିଲ୍ଲା ବାଛନ୍ତୁ",
       "husbandName": "ସ୍ୱାମୀଙ୍କ ନାମ",
-      "aadhaarNumber": "ଆଧାର ନମ୍ବର",
       "dateOfBirth": "ଜନ୍ମ ତାରିଖ",
       "age": "ବୟସ",
       "fullAddress": "ସମ୍ପୂର୍ଣ୍ଣ ଠିକଣା",
@@ -643,7 +606,6 @@ const resources = {
       "chooseFileType": "ଫାଇଲ ପ୍ରକାର ବାଛନ୍ତୁ",
       "image": "ଚିତ୍ର",
       "document": "ଡକୁମେଣ୍ଟ (PDF)",
-      
       // Mother Dashboard
       "welcome": "ସ୍ୱାଗତମ୍",
       "yourPregnancy": "ଆପଣଙ୍କର ଗର୍ଭଧାରଣ",
@@ -663,7 +625,6 @@ const resources = {
       "emergencyHelpline": "ଜରୁରୀକାଳୀନ ହେଲ୍ପଲାଇନ",
       "weeks": "ସପ୍ତାହ",
       "days": "ଦିନ",
-      
       // Registration & Forms
       "registerPregnancy": "ଗର୍ଭଧାରଣ ପଞ୍ଜୀକରଣ",
       "step1GeneralInfo": "ପଦକ୍ଷେପ 1: ସାଧାରଣ ସୂଚନା",
@@ -676,7 +637,6 @@ const resources = {
       "enterAge": "ବୟସ ଲେଖନ୍ତୁ",
       "selectDate": "ତାରିଖ ବାଛନ୍ତୁ (DD/MM/YYYY)",
       "mobile10Digit": "10-ଅଙ୍କ ମୋବାଇଲ",
-      "aadhar12Digit": "12-ଅଙ୍କ ଆଧାର",
       "enterRCHID": "RCH ID ଲେଖନ୍ତୁ",
       "enterHPRID": "HPR ID ଲେଖନ୍ତୁ",
       "selectBlockFirst": "ପ୍ରଥମେ ବ୍ଲକ ବାଛନ୍ତୁ",
@@ -721,7 +681,6 @@ const resources = {
       "general": "ସାଧାରଣ",
       "pregnancy": "ଗର୍ଭଧାରଣ",
       "review": "ପରୀକ୍ଷା",
-      
       // ANC & Medical
       "ancTracking": "ANC ଟ୍ରାକିଂ",
       "ancVisit": "ANC ଭେଟ",
@@ -745,7 +704,6 @@ const resources = {
       "failedToSaveANCVisit": "ANC ଭେଟ ସେଭ କରିବାରେ ବିଫଳ",
       "saving": "ସେଭ ହେଉଛି...",
       "save": "ସେଭ",
-      
       // USG Appointments
       "bookUSG": "USG ବୁକିଂ",
       "patientDetails": "ରୋଗୀ ବିବରଣୀ",
@@ -764,11 +722,9 @@ const resources = {
       "pleaseUploadPrescription": "ଦୟାକରି ପ୍ରେସ୍କ୍ରିପସନ ଅପଲୋଡ କରନ୍ତୁ",
       "usgAppointmentBookedSuccessfully": "USG ଆପୋଇଣ୍ଟମେଣ୍ଟ ସଫଳଭାବେ ବୁକ ହୋଇଛି",
       "failedToBookAppointment": "ଆପୋଇଣ୍ଟମେଣ୍ଟ ବୁକ କରିବାରେ ବିଫଳ",
-      
       // Bulk Upload
       "failedToSelectFile": "ଫାଇଲ ବାଛିବାରେ ବିଫଳ",
       "uploadFailed": "ଅପଲୋଡ ବିଫଳ। ଦୟାକରି ଫାଇଲ ଫର୍ମ୍ୟାଟ ଏବଂ ତଥ୍ୟ ଯାଁଚ କରନ୍ତୁ।",
-      
       // Reports
       "reports": "ରିପୋର୍ଟ",
       "allReports": "ସମସ୍ତ ରିପୋର୍ଟ",
@@ -786,7 +742,6 @@ const resources = {
       "downloadFailed": "ଡାଉନଲୋଡ ବିଫଳ",
       "sharingNotAvailable": "ଏହି ଡିଭାଇସରେ ଶେୟାରିଂ ଉପଲବ୍ଧ ନାହିଁ",
       "failedToDownloadReport": "ରିପୋର୍ଟ ଡାଉନଲୋଡ କରିବାରେ ବିଫଳ",
-      
       // Grievance
       "grievanceHandling": "ଅଭିଯୋଗ ପରିଚାଳନା",
       "all": "ସମସ୍ତ",
@@ -801,13 +756,11 @@ const resources = {
       "resolutionNotes": "ସମାଧାନ ଟିପ୍ପଣୀ",
       "enterResolutionDetails": "ସମାଧାନ ବିବରଣୀ ଏବଂ ନେଓୟା କାର୍ଯ୍ୟ ଲେଖନ୍ତୁ...",
       "markResolved": "ସମାଧାନ ଚିହ୍ନିତ କରନ୍ତୁ",
-      
       // Block Reports
       "blockReports": "ବ୍ଲକ ରିପୋର୍ଟ",
       "totalWards": "ମୋଟ ୱାର୍ଡ",
       "wardWiseReports": "ୱାର୍ଡ-ଭିତ୍ତିକ ରିପୋର୍ଟ",
       "wardWiseReportsGenerated": "ପ୍ରତି ମାସର 20 ତାରିଖରେ ୱାର୍ଡ-ଭିତ୍ତିକ ରିପୋର୍ଟ ସ୍ୱୟଂଚାଳିତ ଭାବରେ ସୃଷ୍ଟି ହୁଏ",
-      
       // Performance Trends
       "performanceTrends": "କାର୍ଯ୍ୟଦକ୍ଷତା ଧାରା",
       "blockWise": "ବ୍ଲକ-ଭିତ୍ତିକ",
@@ -827,7 +780,6 @@ const resources = {
       "bestPerforming": "ସର୍ବୋତ୍ତମ କାର୍ଯ୍ୟଦକ୍ଷତା",
       "needsAttention": "ଧ୍ୟାନ ଦରକାର",
       "mostActive": "ସବୁଥୁ ସକ୍ରିୟ",
-      
       // Appointment Details
       "appointmentDetails": "ଆପୋଇଣ୍ଟମେଣ୍ଟ ବିବରଣୀ",
       "appointment": "ଆପୋଇଣ୍ଟମେଣ୍ଟ",
@@ -843,7 +795,6 @@ const resources = {
       "reportCompleted": "ରିପୋର୍ଟ ସମ୍ପନ୍ନ",
       "normal": "ସାଧାରଣ",
       "failedToLoadAppointmentDetails": "ଆପୋଇଣ୍ଟମେଣ୍ଟ ବିବରଣୀ ଲୋଡ କରିବାରେ ବିଫଳ",
-      
       // Grievance Details
       "grievanceDetails": "ଅଭିଯୋଗ ବିବରଣୀ",
       "grievanceNotFound": "ଅଭିଯୋଗ ମିଳିଲା ନାହିଁ",
@@ -854,7 +805,6 @@ const resources = {
       "timeline": "ସମୟସୀମା",
       "created": "ସୃଷ୍ଟି",
       "escalatedToDistrict": "ଜିଲ୍ଲାକୁ ଉନ୍ନତ କରାଯାଇଛି",
-      
       // Pending Approvals
       "pendingApprovals": "ବାକି ଅନୁମୋଦନ",
       "failedToLoadPendingApprovals": "ବାକି ଅନୁମୋଦନ ଲୋଡ କରିବାରେ ବିଫଳ",
@@ -872,7 +822,6 @@ const resources = {
       "registrationDate": "ପଞ୍ଜୀକରଣ ତାରିଖ",
       "registrationsPendingApproval": "ପଞ୍ଜୀକରଣ ଅନୁମୋଦନ ବାକି ଅଛି",
       "noPendingApprovals": "କୋଣସି ବାକି ଅନୁମୋଦନ ନାହିଁ",
-      
       // Deduplication
       "deduplicationCheck": "ନକଲ ଯାଁଚ",
       "pleaseEnterSearchValue": "ଦୟାକରି ଖୋଜ ମୂଲ୍ୟ ଲେଖନ୍ତୁ",
@@ -914,7 +863,6 @@ const resources = {
       "ageUnder20": "ବୟସ < 20 ବର୍ଷ",
       "markedAsHighRisk": "ଉଚ୍ଚ ଜୋଖିମ ଭାବରେ ଚିହ୍ନିତ",
       "riskAssessmentPending": "ଜୋଖିମ ମୂଲ୍ୟାୟନ ବାକି",
-      
       // Patient List & Common
       "selectPatient": "ରୋଗୀ ବାଛନ୍ତୁ",
       "selectPatientForUSG": "USG ପାଇଁ ରୋଗୀ ବାଛନ୍ତୁ",
@@ -923,7 +871,6 @@ const resources = {
       "noPatientsFound": "କୌଣସି ରୋଗୀ ମିଳିଲା ନାହିଁ",
       "mobile": "ମୋବାଇଲ",
       "address": "ଠିକଣା",
-      
       // Bulk Upload
       "bulkUploadRCHExcel": "ବଲ୍କ ଅପଲୋଡ RCH Excel",
       "uploadBeneficiaryData": "ଉପକାରୀ ତଥ୍ୟ ଅପଲୋଡ",
@@ -950,7 +897,6 @@ const resources = {
       "systemWillCheckDuplicates": "ସିସ୍ଟମ ABHA ID ଏବଂ ମୋବାଇଲ ଆଧାରରେ ସ୍ୱୟଂଚାଳିତ ଭାବରେ ନକଲ ପାଇଁ ଯାଞ୍ଚ କରିବ",
       "invalidDataWillBeFlagged": "ଅବୈଧ ତଥ୍ୟ ସଂଶୋଧନ ପାଇଁ ଚିହ୍ନିତ ହେବ",
       "onlyValidatedRecordsImported": "କେବଳ ଯାଞ୍ଚିତ ରେକର୍ଡ ଆମଦାନି କରାଯିବ",
-      
       // Password Management
       "forgotPassword": "ପାସୱାର୍ଡ ଭୁଲିଗଲେ",
       "resetPassword": "ପାସୱାର୍ଡ ରିସେଟ କରନ୍ତୁ",
@@ -965,7 +911,6 @@ const resources = {
       "resetting": "ରିସେଟ କରୁଛି",
       "enterCurrentAndNewPassword": "ଆପଣଙ୍କ ବର୍ତ୍ତମାନ ପାସୱାର୍ଡ ଏବଂ ନୂଆ ପାସୱାର୍ଡ ଦିଅନ୍ତୁ",
       "changing": "ବଦଳାଉଛି",
-      
       // Delivery Referrals
       "totalReferrals": "ମୋଟ ରେଫରାଲ",
       "pendingReferrals": "ବାକି ରେଫରାଲ",
@@ -975,6 +920,7 @@ const resources = {
       "deliveryReferrals": "ଡେଲିଭରି ରେଫରାଲ",
       "recentReferrals": "ସାମ୍ପ୍ରତିକ ରେଫରାଲ",
       "reviewAndAccept": "ଡେଲିଭରି ରେଫରାଲ ସମୀକ୍ଷା ଏବଂ ଗ୍ରହଣ କରନ୍ତୁ",
+      "searchandrefer":"ଗର୍ଭବତୀ ମହିଳାମାନଙ୍କୁ ଚିହ୍ନଟ କରି ପ୍ରସବ ପାଇଁ ରେଫର କରନ୍ତୁ।",
       "handleReReferred": "ପୁନଃ ରେଫର ହୋଇଥିବା ଡେଲିଭରି ମାମଲା ପରିଚାଳନା କରନ୍ତୁ",
       "viewCompleteHistory": "ସମ୍ପୂର୍ଣ୍ଣ ରେଫରାଲ ଇତିହାସ ଦେଖନ୍ତୁ",
       "analyticsAndMetrics": "ବିଶ୍ଳେଷଣ ଏବଂ କାର୍ଯ୍ୟଦକ୍ଷତା ମେଟ୍ରିକ୍ସ",
@@ -998,17 +944,180 @@ const resources = {
     }
   }
 };
-
-i18n
-  .use(initReactI18next)
-  .init({
-    resources,
-    lng: 'en',
-    fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false,
-    },
-  });
+i18n.use(initReactI18next).init({
+  resources,
+  lng: 'en',
+  fallbackLng: 'en',
+  interpolation: {
+    escapeValue: false
+  }
+});
+i18n.addResources('en', 'translation', {
+  autoFilled: 'Auto-filled',
+  weightUnit: 'kg',
+  fundalHeightUnit: 'cm',
+  onlySubCentreAnc: 'Only sub-centre users can add or edit ANC visits.',
+  verifyAncPermissions: 'Unable to verify ANC visit permissions.',
+  visitDateBeforeRegistration: 'Visit date cannot be before registration date',
+  bloodPressureFormatError: 'Blood Pressure must be in format: systolic/diastolic (e.g., 120/80)',
+  systolicRangeError: 'Systolic pressure must be between 70-200 mmHg',
+  diastolicRangeError: 'Diastolic pressure must be between 40-130 mmHg',
+  systolicGreaterError: 'Systolic pressure must be greater than diastolic',
+  fetalHeartRateNumberError: 'Fetal Heart Rate must be a valid number',
+  hemoglobinNumberError: 'Hemoglobin must be a valid number',
+  hemoglobinRangeError: 'Hemoglobin must be between 4-20 g/dL',
+  weightNumberError: 'Weight must be a valid number',
+  weightRangeError: 'Weight must be between 30-200 kg',
+  syncWhenOnline: 'offline - will sync when online'
+});
+i18n.addResources('or', 'translation', {
+  autoFilled: 'ସ୍ୱୟଂ ଭରାଯାଇଛି',
+  weightUnit: 'କି.ଗ୍ରା.',
+  fundalHeightUnit: 'ସେ.ମି.',
+  onlySubCentreAnc: 'କେବଳ ସବ୍-ସେଣ୍ଟର ବ୍ୟବହାରକାରୀମାନେ ANC ଭିଜିଟ୍ ଯୋଡ଼ିବା କିମ୍ବା ସମ୍ପାଦନ କରିପାରିବେ।',
+  verifyAncPermissions: 'ANC ଭିଜିଟ୍ ଅନୁମତି ଯାଞ୍ଚ କରିବାରେ ଅସମର୍ଥ।',
+  visitDateBeforeRegistration: 'ଭିଜିଟ୍ ତାରିଖ ପଞ୍ଜୀକରଣ ତାରିଖରୁ ପୂର୍ବରୁ ହୋଇପାରିବ ନାହିଁ',
+  bloodPressureFormatError: 'ରକ୍ତଚାପ ସିଷ୍ଟୋଲିକ/ଡାୟାଷ୍ଟୋଲିକ ଫର୍ମାଟ୍‌ରେ ହେବା ଦରକାର (ଉଦାହରଣ: 120/80)',
+  systolicRangeError: 'ସିଷ୍ଟୋଲିକ ଚାପ 70-200 mmHg ମଧ୍ୟରେ ହେବା ଦରକାର',
+  diastolicRangeError: 'ଡାୟାଷ୍ଟୋଲିକ ଚାପ 40-130 mmHg ମଧ୍ୟରେ ହେବା ଦରକାର',
+  systolicGreaterError: 'ସିଷ୍ଟୋଲିକ ଚାପ ଡାୟାଷ୍ଟୋଲିକଠାରୁ ଅଧିକ ହେବା ଦରକାର',
+  fetalHeartRateNumberError: 'ଭ୍ରୂଣ ହୃଦସ୍ପନ୍ଦନ ଏକ ବୈଧ ସଂଖ୍ୟା ହେବା ଦରକାର',
+  hemoglobinNumberError: 'ହିମୋଗ୍ଲୋବିନ ଏକ ବୈଧ ସଂଖ୍ୟା ହେବା ଦରକାର',
+  hemoglobinRangeError: 'ହିମୋଗ୍ଲୋବିନ 4-20 g/dL ମଧ୍ୟରେ ହେବା ଦରକାର',
+  weightNumberError: 'ଓଜନ ଏକ ବୈଧ ସଂଖ୍ୟା ହେବା ଦରକାର',
+  weightRangeError: 'ଓଜନ 30-200 କି.ଗ୍ରା. ମଧ୍ୟରେ ହେବା ଦରକାର',
+  syncWhenOnline: 'ଅଫଲାଇନ୍ - ଅନଲାଇନ୍ ହେଲେ ସିଙ୍କ ହେବ'
+});
+i18n.addResources('en', 'translation', {
+  accessDenied: 'Access Denied',
+  appointmentDetailAccessDenied: 'This screen is only accessible to Sub-Centre and USG Centre users.',
+  noPhoneNumber: 'No Phone Number',
+  phoneNumberUnavailableForPatient: 'Phone number not available for this patient',
+  appointmentDetailsUnavailableOffline: 'Appointment details not available offline',
+  fileNotAvailable: 'File not available',
+  offlineMode: 'Offline Mode',
+  fileNotCachedViewOnline: 'File not cached. Please view it once while online.',
+  unableToOpenFileTryAgain: 'Unable to open file. Please try again.',
+  cannotDownloadFilesOffline: 'Cannot download files while offline.',
+  fileDownloadedOfflineViewing: 'File downloaded for offline viewing',
+  failedToDownloadFile: 'Failed to download file',
+  cannotAcceptAppointmentsOffline: 'Cannot accept appointments while offline. Please connect to the internet.',
+  appointmentAcceptedSuccessfully: 'Appointment accepted successfully!',
+  failedToAcceptAppointment: 'Failed to accept appointment',
+  pleaseEnterReasonForReschedule: 'Please enter reason for reschedule',
+  cannotRescheduleAppointmentsOffline: 'Cannot reschedule appointments while offline. Please connect to the internet.',
+  appointmentDateTimeMustBeFuture: 'Appointment date and time must be in the future',
+  selectFutureTimeForToday: 'Please select a future time for today',
+  rescheduleWithinSevenDays: 'Reschedule date must be within 7 days of the current scheduled date ({{date}}).',
+  appointmentRescheduledSuccessfully: 'Appointment rescheduled successfully!',
+  failedToRescheduleAppointment: 'Failed to reschedule appointment',
+  ancVisits: 'ANC Visits',
+  noAncDataCompletedVisit: 'No ANC data available as no visit has completed',
+  referredForUSG: 'Referred for USG',
+  requestedOn: 'Requested',
+  requestedBy: 'Requested by',
+  completedOn: 'Completed',
+  prescriptionLabel: 'Prescription {{count}}',
+  view: 'View',
+  viewOffline: 'View (Offline)',
+  completionDetails: 'Completion Details',
+  usgReportLabel: 'USG Report',
+  smsNotification: 'SMS Notification',
+  sent: 'Sent',
+  accept: 'Accept',
+  reschedule: 'Reschedule',
+  rescheduleAppointment: 'Reschedule Appointment',
+  reasonForReschedule: 'Reason for reschedule',
+  accepted: 'Accepted',
+  rescheduled: 'Rescheduled',
+  cancelled: 'Cancelled',
+  rejected: 'Rejected',
+  noShow: 'No Show',
+  anm: 'ANM',
+  emergencyCase: 'Emergency Case'
+});
+i18n.addResources('or', 'translation', {
+  accessDenied: 'ପ୍ରବେଶ ଅନୁମତି ନାହିଁ',
+  appointmentDetailAccessDenied: 'ଏହି ସ୍କ୍ରିନ୍ କେବଳ Sub-Centre ଓ USG Centre ବ୍ୟବହାରକାରୀଙ୍କ ପାଇଁ ଉପଲବ୍ଧ।',
+  noPhoneNumber: 'ଫୋନ୍ ନମ୍ବର ନାହିଁ',
+  phoneNumberUnavailableForPatient: 'ଏହି ରୋଗୀଙ୍କ ପାଇଁ ଫୋନ୍ ନମ୍ବର ଉପଲବ୍ଧ ନାହିଁ',
+  appointmentDetailsUnavailableOffline: 'ଅଫଲାଇନ୍‌ରେ ଆପଏଣ୍ଟମେଣ୍ଟ ବିବରଣୀ ଉପଲବ୍ଧ ନାହିଁ',
+  fileNotAvailable: 'ଫାଇଲ୍ ଉପଲବ୍ଧ ନାହିଁ',
+  offlineMode: 'ଅଫଲାଇନ୍ ମୋଡ୍',
+  fileNotCachedViewOnline: 'ଫାଇଲ୍ କ୍ୟାଶ୍ ହୋଇନାହିଁ। ଦୟାକରି ଏକଥର ଅନଲାଇନ୍‌ରେ ଦେଖନ୍ତୁ।',
+  unableToOpenFileTryAgain: 'ଫାଇଲ୍ ଖୋଲିପାରିଲା ନାହିଁ। ଦୟାକରି ପୁନି ଚେଷ୍ଟା କରନ୍ତୁ।',
+  cannotDownloadFilesOffline: 'ଅଫଲାଇନ୍‌ରେ ଫାଇଲ୍ ଡାଉନଲୋଡ୍ କରିହେବ ନାହିଁ।',
+  fileDownloadedOfflineViewing: 'ଅଫଲାଇନ୍ ଦେଖିବା ପାଇଁ ଫାଇଲ୍ ଡାଉନଲୋଡ୍ ହୋଇଛି',
+  failedToDownloadFile: 'ଫାଇଲ୍ ଡାଉନଲୋଡ୍ ବିଫଳ ହେଲା',
+  cannotAcceptAppointmentsOffline: 'ଅଫଲାଇନ୍‌ରେ ଆପଏଣ୍ଟମେଣ୍ଟ ଗ୍ରହଣ କରିହେବ ନାହିଁ। ଦୟାକରି ଇଣ୍ଟରନେଟ୍ ସଂଯୋଗ କରନ୍ତୁ।',
+  appointmentAcceptedSuccessfully: 'ଆପଏଣ୍ଟମେଣ୍ଟ ସଫଳଭାବେ ଗ୍ରହଣ ହେଲା!',
+  failedToAcceptAppointment: 'ଆପଏଣ୍ଟମେଣ୍ଟ ଗ୍ରହଣ ବିଫଳ ହେଲା',
+  pleaseEnterReasonForReschedule: 'ଦୟାକରି ପୁନଃ ନିର୍ଧାରଣର କାରଣ ଲେଖନ୍ତୁ',
+  cannotRescheduleAppointmentsOffline: 'ଅଫଲାଇନ୍‌ରେ ଆପଏଣ୍ଟମେଣ୍ଟ ପୁନଃ ନିର୍ଧାରଣ କରିହେବ ନାହିଁ। ଦୟାକରି ଇଣ୍ଟରନେଟ୍ ସଂଯୋଗ କରନ୍ତୁ।',
+  appointmentDateTimeMustBeFuture: 'ଆପଏଣ୍ଟମେଣ୍ଟ ତାରିଖ ଏବଂ ସମୟ ଭବିଷ୍ୟତରେ ହେବା ଦରକାର',
+  selectFutureTimeForToday: 'ଦୟାକରି ଆଜି ପାଇଁ ଭବିଷ୍ୟତ ସମୟ ବାଛନ୍ତୁ',
+  rescheduleWithinSevenDays: 'ପୁନଃ ନିର୍ଧାରଣ ତାରିଖ ବର୍ତ୍ତମାନ ନିର୍ଧାରିତ ତାରିଖ ({{date}}) ଠାରୁ ୭ ଦିନ ମଧ୍ୟରେ ହେବା ଦରକାର।',
+  appointmentRescheduledSuccessfully: 'ଆପଏଣ୍ଟମେଣ୍ଟ ସଫଳଭାବେ ପୁନଃ ନିର୍ଧାରଣ ହେଲା!',
+  failedToRescheduleAppointment: 'ଆପଏଣ୍ଟମେଣ୍ଟ ପୁନଃ ନିର୍ଧାରଣ ବିଫଳ ହେଲା',
+  ancVisits: 'ANC ଭେଟ',
+  noAncDataCompletedVisit: 'କୌଣସି ଭେଟ ସମାପ୍ତ ହୋଇନଥିବାରୁ ANC ତଥ୍ୟ ଉପଲବ୍ଧ ନାହିଁ',
+  referredForUSG: 'USG ପାଇଁ ରେଫର୍ କରାଯାଇଛି',
+  requestedOn: 'ଅନୁରୋଧ ତାରିଖ',
+  requestedBy: 'ଅନୁରୋଧକାରୀ',
+  completedOn: 'ସମାପ୍ତ ତାରିଖ',
+  prescriptionLabel: 'ପ୍ରେସକ୍ରିପ୍ସନ୍ {{count}}',
+  view: 'ଦେଖନ୍ତୁ',
+  viewOffline: 'ଦେଖନ୍ତୁ (ଅଫଲାଇନ୍)',
+  completionDetails: 'ସମାପ୍ତି ବିବରଣୀ',
+  usgReportLabel: 'USG ରିପୋର୍ଟ',
+  smsNotification: 'SMS ସୂଚନା',
+  sent: 'ପଠାଯାଇଛି',
+  accept: 'ଗ୍ରହଣ କରନ୍ତୁ',
+  reschedule: 'ପୁନଃ ନିର୍ଧାରଣ',
+  rescheduleAppointment: 'ଆପଏଣ୍ଟମେଣ୍ଟ ପୁନଃ ନିର୍ଧାରଣ',
+  reasonForReschedule: 'ପୁନଃ ନିର୍ଧାରଣର କାରଣ',
+  accepted: 'ଗ୍ରହୀତ',
+  rescheduled: 'ପୁନଃ ନିର୍ଧାରିତ',
+  cancelled: 'ବାତିଲ୍',
+  rejected: 'ଖାରଜ',
+  noShow: 'ଉପସ୍ଥିତ ନାହିଁ',
+  anm: 'ANM',
+  emergencyCase: 'ଜରୁରୀକାଳୀନ କେସ୍'
+});
+i18n.addResources('en', 'translation', {
+  remarks: 'Remarks'
+});
+i18n.addResources('or', 'translation', {
+  remarks: 'ମନ୍ତବ୍ୟ'
+});
+i18n.addResources('en', 'translation', {
+  notSpecified: 'Not provided'
+});
+i18n.addResources('or', 'translation', {
+  notSpecified: 'ଉଲ୍ଲେଖ ନାହିଁ'
+});
+i18n.addResources('en', 'translation', {
+  remove: 'Remove'
+});
+i18n.addResources('or', 'translation', {
+  remove: 'ହଟାନ୍ତୁ'
+});
+i18n.addResources('en', 'translation', {
+  selectDeliveryPointRequired: 'Please select a DP referral',
+  selectDeliveryPointRequiredLabel: 'Select DP Referral *',
+  currentDeliveryPointLabel: 'Current DP Referral: {{name}}',
+  searchDeliveryPoints: 'Search DP referrals...',
+  noDeliveryPointsMatchSearch: 'No DP referrals found matching your search',
+  noDeliveryPointsAvailable: 'No DP referrals available'
+});
+i18n.addResources('or', 'translation', {
+  selectDeliveryPointRequired: 'ଦୟାକରି ଏକ DP ରେଫରାଲ ବାଛନ୍ତୁ',
+  selectDeliveryPointRequiredLabel: 'DP ରେଫରାଲ ବାଛନ୍ତୁ *',
+  currentDeliveryPointLabel: 'ବର୍ତ୍ତମାନ DP ରେଫରାଲ: {{name}}',
+  searchDeliveryPoints: 'DP ରେଫରାଲ ଖୋଜନ୍ତୁ...',
+  noDeliveryPointsMatchSearch: 'ଆପଣଙ୍କ ଖୋଜ ଅନୁସାରେ କୌଣସି DP ରେଫରାଲ ମିଳିଲା ନାହିଁ',
+  noDeliveryPointsAvailable: 'କୌଣସି DP ରେଫରାଲ ଉପଲବ୍ଧ ନାହିଁ'
+});
 
 // Load saved language preference
 getStoredLanguage().then(lng => {
@@ -1033,6 +1142,7 @@ i18n.addResources('en', 'translation', {
   visit: 'Visit',
   offlineTag: '(Offline)',
   notesLabel: 'Notes:',
+  remarks: 'Remarks',
   noANCVisitsRecorded: 'No ANC visits recorded yet',
   scheduleUSGLabel: 'Schedule USG',
   usgTimeLabel: 'USG Time',
@@ -1179,9 +1289,8 @@ i18n.addResources('en', 'translation', {
   riskAssessment: 'Risk Assessment',
   highRiskPregnancy: 'High Risk Pregnancy',
   additionalNotes: 'Additional Notes',
-  enterAdditionalNotes: 'Enter additional notes',
+  enterAdditionalNotes: 'Enter additional notes'
 });
-
 i18n.addResources('or', 'translation', {
   scheduleUSGAppointment: 'USG ଆପଏଣ୍ଟମେଣ୍ଟ ନିର୍ଧାରଣ',
   bookUSGAppointments: 'USG ଆପଏଣ୍ଟମେଣ୍ଟ ବୁକ୍ କରନ୍ତୁ',
@@ -1239,7 +1348,7 @@ i18n.addResources('or', 'translation', {
   noAppointmentsFound: 'କୌଣସି ଆପଏଣ୍ଟମେଣ୍ଟ ମିଳିଲା ନାହିଁ',
   noCachedAppointments: 'କ୍ୟାଶ୍ ହୋଇଥିବା ଆପଏଣ୍ଟମେଣ୍ଟ ଉପଲବ୍ଧ ନାହିଁ',
   connectInternetForAppointments: 'ନୂତନ ଆପଏଣ୍ଟମେଣ୍ଟ ପାଇଁ ଇଣ୍ଟରନେଟ୍ ସଂଯୋଗ କରନ୍ତୁ',
-  noUSGCentresInDistrict: 'ଆପଣଙ୍କ ଜିଲ୍ଲାରେ କୌଣସି USG ସେଣ୍ଟର ଉପଲବ୍ଧ ନାହିଁ',
+  noUSGCentresInDistrict: 'ଆପଣଙ୍କ ଜିଲ୍ଲାରେ କୌଣସି USG ସେଣ୍ଟର ଉପଲବ୍ଧ ନାହିଁ'
 });
 
 // Additional fallback keys for newly localized screens
@@ -1301,6 +1410,7 @@ i18n.addResources('en', 'translation', {
   todaysCompletedScans: "Today's completed scans",
   noCompletedReportsFor: 'No completed reports for {{period}}',
   todayLower: 'today',
+  today: 'Today',
   lastWeekLower: 'last week',
   lastMonthLower: 'last month',
   thisPeriod: 'this period',
@@ -1343,9 +1453,8 @@ i18n.addResources('en', 'translation', {
   riskAssessment: 'Risk Assessment',
   highRiskPregnancy: 'High Risk Pregnancy',
   additionalNotes: 'Additional Notes',
-  enterAdditionalNotes: 'Enter additional notes',
+  enterAdditionalNotes: 'Enter additional notes'
 });
-
 i18n.addResources('or', 'translation', {
   unread: 'ଅପଠିତ',
   noNotifications: 'କୌଣସି ନୋଟିଫିକେସନ୍ ନାହିଁ',
@@ -1378,6 +1487,7 @@ i18n.addResources('or', 'translation', {
   todaysCompletedScans: 'ଆଜିର ସମ୍ପୂର୍ଣ୍ଣ ସ୍କାନ୍',
   noCompletedReportsFor: '{{period}} ପାଇଁ କୌଣସି ସମ୍ପୂର୍ଣ୍ଣ ରିପୋର୍ଟ ନାହିଁ',
   todayLower: 'ଆଜି',
+  today: 'ଆଜି',
   lastWeekLower: 'ଗତ ସପ୍ତାହ',
   lastMonthLower: 'ଗତ ମାସ',
   thisPeriod: 'ଏହି ଅବଧି',
@@ -1408,28 +1518,24 @@ i18n.addResources('or', 'translation', {
   highRiskPregnancy: 'ଉଚ୍ଚ ଝୁମ୍ପ ଗର୍ଭାବସ୍ଥା',
   additionalNotes: 'ଅତିରିକ୍ତ ଟିପ୍ପଣୀ',
   enterAdditionalNotes: 'ଅତିରିକ୍ତ ଟିପ୍ପଣୀ ଲେଖନ୍ତୁ',
+  abhaID:'ABHA ID'
 });
-
 i18n.addResources('en', 'translation', {
   enterABHAID: 'Enter ABHA ID',
-  deliveryReferrals: 'Delivery Referrals',
+  deliveryReferrals: 'Delivery Referrals'
 });
-
 i18n.addResources('or', 'translation', {
   enterABHAID: 'ABHA ID ଲେଖନ୍ତୁ',
-  deliveryReferrals: 'ଡେଲିଭରି ରେଫରାଲ',
+  deliveryReferrals: 'ଡେଲିଭରି ରେଫରାଲ'
 });
-
 i18n.addResources('en', 'translation', {
   selectFutureTimeForToday: 'Please select a future time for today.',
-  appointmentDateTimeMustBeFuture: 'Appointment date and time must be in the future.',
+  appointmentDateTimeMustBeFuture: 'Appointment date and time must be in the future.'
 });
-
 i18n.addResources('or', 'translation', {
   selectFutureTimeForToday: 'ଆଜି ପାଇଁ ଦୟାକରି ଭବିଷ୍ୟତ ସମୟ ବାଛନ୍ତୁ।',
-  appointmentDateTimeMustBeFuture: 'ଆପଏଣ୍ଟମେଣ୍ଟ ତାରିଖ ଏବଂ ସମୟ ଭବିଷ୍ୟତରେ ହେବା ଦରକାର।',
+  appointmentDateTimeMustBeFuture: 'ଆପଏଣ୍ଟମେଣ୍ଟ ତାରିଖ ଏବଂ ସମୟ ଭବିଷ୍ୟତରେ ହେବା ଦରକାର।'
 });
-
 i18n.addResources('en', 'translation', {
   deliveryReferralHeader: 'Delivery Referral',
   usgTimeline: 'USG Timeline',
@@ -1451,9 +1557,8 @@ i18n.addResources('en', 'translation', {
   centreLabel: 'Centre',
   doctorLabel: 'Doctor',
   referralStatusLabel: 'Status',
-  referredLabel: 'Referred',
+  referredLabel: 'Referred'
 });
- 
 i18n.addResources('en', 'translation', {
   referralDetails: 'Referral Details',
   loadingReferralDetails: 'Loading referral details...',
@@ -1513,13 +1618,12 @@ i18n.addResources('en', 'translation', {
   acceptReferral: 'Accept Referral',
   reReferPatient: 'Re-refer Patient',
   recordOutcome: 'Record Outcome',
-  onlyDpCanManageReferral: 'Only Delivery Point (DP) users can manage this referral.',
+  onlyDpCanManageReferral: 'Only DP Referral users can manage this referral.',
   initialReferralSource: 'Initial referral source',
-  previousDeliveryPoint: 'Previous delivery point',
+  previousDeliveryPoint: 'Previous DP referral',
   acceptReferralConfirmation: 'Are you sure you want to accept this delivery referral?',
-  referralAcceptedOfflineSync: 'Referral accepted offline and will sync when online.',
+  referralAcceptedOfflineSync: 'Referral accepted offline and will sync when online.'
 });
-
 i18n.addResources('or', 'translation', {
   referralDetails: 'ରେଫରାଲ ବିବରଣୀ',
   loadingReferralDetails: 'ରେଫରାଲ ବିବରଣୀ ଲୋଡ୍ ହେଉଛି...',
@@ -1583,9 +1687,8 @@ i18n.addResources('or', 'translation', {
   initialReferralSource: 'ପ୍ରାରମ୍ଭିକ ରେଫରାଲ ଉତ୍ସ',
   previousDeliveryPoint: 'ପୂର୍ବ ଡେଲିଭେରି ପଏଣ୍ଟ',
   acceptReferralConfirmation: 'ଆପଣ ନିଶ୍ଚିତ ଭାବରେ ଏହି ଡେଲିଭେରି ରେଫରାଲକୁ ଗ୍ରହଣ କରିବାକୁ ଚାହୁଁଛନ୍ତି କି?',
-  referralAcceptedOfflineSync: 'ରେଫରାଲ ଅଫଲାଇନ ଭାବରେ ଗ୍ରହଣ କରାଗଲା ଏବଂ ଅନଲାଇନ ହେଲେ ସିଙ୍କ ହେବ।',
+  referralAcceptedOfflineSync: 'ରେଫରାଲ ଅଫଲାଇନ ଭାବରେ ଗ୍ରହଣ କରାଗଲା ଏବଂ ଅନଲାଇନ ହେଲେ ସିଙ୍କ ହେବ।'
 });
-
 i18n.addResources('or', 'translation', {
   deliveryReferralHeader: 'ଡେଲିଭରି ରେଫରାଲ',
   usgTimeline: 'USG ଟାଇମଲାଇନ',
@@ -1607,19 +1710,16 @@ i18n.addResources('or', 'translation', {
   centreLabel: 'କେନ୍ଦ୍ର',
   doctorLabel: 'ଡାକ୍ତର',
   referralStatusLabel: 'ସ୍ଥିତି',
-  referredLabel: 'ରେଫର୍ କରାଗଲା',
+  referredLabel: 'ରେଫର୍ କରାଗଲା'
 });
-
 i18n.addResources('en', 'translation', {
   dpReports: 'DP Reports',
-  deliveryPointAnalytics: 'Delivery point analytics',
+  deliveryPointAnalytics: 'DP referral analytics'
 });
-
 i18n.addResources('or', 'translation', {
   dpReports: 'ଡିପି ରିପୋର୍ଟ',
-  deliveryPointAnalytics: 'ଡିଲିଭରି ପଏଣ୍ଟ ବିଶ୍ଳେଷଣ',
+  deliveryPointAnalytics: 'ଡିଲିଭରି ପଏଣ୍ଟ ବିଶ୍ଳେଷଣ'
 });
-
 i18n.addResources('en', 'translation', {
   settings: 'Settings',
   language: 'Language',
@@ -1664,9 +1764,8 @@ i18n.addResources('en', 'translation', {
   developedFor: 'Developed for:',
   healthFamilyWelfareDept: 'Health & Family Welfare Department',
   governmentOfOdisha: 'Government of Odisha',
-  puriDistrictImplementation: 'Puri District Implementation',
+  puriDistrictImplementation: 'Puri District Implementation'
 });
-
 i18n.addResources('or', 'translation', {
   settings: 'ସେଟିଂସ୍',
   language: 'ଭାଷା',
@@ -1711,61 +1810,52 @@ i18n.addResources('or', 'translation', {
   developedFor: 'ଉନ୍ନୟନ କରାଯାଇଛି:',
   healthFamilyWelfareDept: 'ସ୍ୱାସ୍ଥ୍ୟ ଓ ପରିବାର କଲ୍ୟାଣ ବିଭାଗ',
   governmentOfOdisha: 'ଓଡିଶା ସରକାର',
-  puriDistrictImplementation: 'ପୁରୀ ଜିଲ୍ଲା ନିଷ୍ପାଦନ',
+  puriDistrictImplementation: 'ପୁରୀ ଜିଲ୍ଲା ନିଷ୍ପାଦନ'
 });
-
 i18n.addResources('en', 'translation', {
   loginStepAuthenticating: 'Checking your credentials...',
   loginStepLoadingProfile: 'Loading your profile and access...',
   loginStepSavingSession: 'Saving your secure login data...',
   loginStepSyncingData: 'Syncing app data for offline use...',
-  loginStepOpeningDashboard: 'Opening your dashboard...',
+  loginStepOpeningDashboard: 'Opening your dashboard...'
 });
-
 i18n.addResources('or', 'translation', {
   loginStepAuthenticating: 'ଲଗଇନ୍ ତଥ୍ୟ ଯାଞ୍ଚ କରାଯାଉଛି...',
   loginStepLoadingProfile: 'ଆପଣଙ୍କ ପ୍ରୋଫାଇଲ ଓ ଅଧିକାର ଲୋଡ୍ ହେଉଛି...',
   loginStepSavingSession: 'ସୁରକ୍ଷିତ ଲଗଇନ୍ ତଥ୍ୟ ସଞ୍ଚୟ କରାଯାଉଛି...',
   loginStepSyncingData: 'ଅଫଲାଇନ୍ ବ୍ୟବହାର ପାଇଁ ଆପ୍ ତଥ୍ୟ ସିଙ୍କ୍ ହେଉଛି...',
-  loginStepOpeningDashboard: 'ଆପଣଙ୍କ ଡ୍ୟାଶବୋର୍ଡ ଖୋଲାଯାଉଛି...',
+  loginStepOpeningDashboard: 'ଆପଣଙ୍କ ଡ୍ୟାଶବୋର୍ଡ ଖୋଲାଯାଉଛି...'
 });
-
 i18n.addResources('en', 'translation', {
-  scheduleANCUSGAppointment: 'Schedule ANC/USG Appointment',
+  scheduleANCUSGAppointment: 'Schedule ANC/USG Appointment'
 });
-
 i18n.addResources('or', 'translation', {
-  scheduleANCUSGAppointment: 'ANC/USG ଆପଏଣ୍ଟମେଣ୍ଟ ନିର୍ଧାରଣ',
+  scheduleANCUSGAppointment: 'ANC/USG ଆପଏଣ୍ଟମେଣ୍ଟ ନିର୍ଧାରଣ'
 });
 
 // Language switching utility
-export const switchLanguage = async (language) => {
+export const switchLanguage = async language => {
   try {
     await AsyncStorage.setItem('selectedLanguage', language);
     await i18n.changeLanguage(language);
-  } catch (error) {
-    console.error('Error switching language:', error);
-  }
+  } catch (error) {}
 };
-
 export const getCurrentLanguage = () => i18n.resolvedLanguage || i18n.language;
 export const getAvailableLanguages = () => Object.keys(resources);
 export const isOdiaLanguage = () => i18n.language === 'or';
 export const isEnglishLanguage = () => i18n.language === 'en';
-
 i18n.addResources('en', 'translation', {
   dpSummary: 'DP Summary',
-  deliveryPointKPI: 'Delivery Point KPI',
+  deliveryPointKPI: 'DP Referral KPI',
   wardWiseSummary: 'Ward Summary',
   dpWiseOverview: 'DP-wise Overview',
-  deliveryPointSummary: 'Delivery Point Summary',
+  deliveryPointSummary: 'DP Referral Summary',
   noWardPerformanceDataFound: 'No ward performance data found',
-  noDeliveryPointPerformanceDataFound: 'No delivery point performance data found',
+  noDeliveryPointPerformanceDataFound: 'No DP referral performance data found',
   dpReportDataUnavailable: 'DP report data is not available yet.',
   dpReportDownloadedSuccessfully: 'DP report downloaded successfully',
-  failedToDownloadDPReport: 'Failed to download DP report.',
+  failedToDownloadDPReport: 'Failed to download DP report.'
 });
-
 i18n.addResources('or', 'translation', {
   dpSummary: 'ଡିପି ସାରାଂଶ',
   deliveryPointKPI: 'ଡିଲିଭରି ପଏଣ୍ଟ KPI',
@@ -1776,9 +1866,8 @@ i18n.addResources('or', 'translation', {
   noDeliveryPointPerformanceDataFound: 'କୌଣସି ଡିଲିଭରି ପଏଣ୍ଟ କାର୍ଯ୍ୟଦକ୍ଷତା ତଥ୍ୟ ମିଳିଲା ନାହିଁ',
   dpReportDataUnavailable: 'ଡିପି ରିପୋର୍ଟ ତଥ୍ୟ ଏଯାବତ୍ ଉପଲବ୍ଧ ନାହିଁ।',
   dpReportDownloadedSuccessfully: 'ଡିପି ରିପୋର୍ଟ ସଫଳଭାବେ ଡାଉନଲୋଡ୍ ହେଲା',
-  failedToDownloadDPReport: 'ଡିପି ରିପୋର୍ଟ ଡାଉନଲୋଡ୍ କରିବାରେ ବିଫଳ।',
+  failedToDownloadDPReport: 'ଡିପି ରିପୋର୍ଟ ଡାଉନଲୋଡ୍ କରିବାରେ ବିଫଳ।'
 });
-
 i18n.addResources('en', 'translation', {
   wardDetails: 'Ward Details',
   failedToLoadWardData: 'Failed to load ward data.',
@@ -1786,9 +1875,8 @@ i18n.addResources('en', 'translation', {
   connectInternetToViewWardDetails: 'Please connect to internet and sync data to view ward details',
   retry: 'Retry',
   noDataAvailableForThisWard: 'No data available for this ward',
-  scheduledDateLabel: 'Scheduled Date',
+  scheduledDateLabel: 'Scheduled Date'
 });
-
 i18n.addResources('or', 'translation', {
   wardDetails: 'ୱାର୍ଡ ବିବରଣୀ',
   failedToLoadWardData: 'ୱାର୍ଡ ତଥ୍ୟ ଲୋଡ୍ କରିବାରେ ବିଫଳ।',
@@ -1796,60 +1884,176 @@ i18n.addResources('or', 'translation', {
   connectInternetToViewWardDetails: 'ୱାର୍ଡ ବିବରଣୀ ଦେଖିବା ପାଇଁ ଦୟାକରି ଇଣ୍ଟରନେଟ୍ ସଂଯୋଗ କରନ୍ତୁ ଏବଂ ତଥ୍ୟ ସିଙ୍କ୍ କରନ୍ତୁ',
   retry: 'ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ',
   noDataAvailableForThisWard: 'ଏହି ୱାର୍ଡ ପାଇଁ କୌଣସି ତଥ୍ୟ ଉପଲବ୍ଧ ନାହିଁ',
-  scheduledDateLabel: 'ନିର୍ଦ୍ଧାରିତ ତାରିଖ',
+  scheduledDateLabel: 'ନିର୍ଦ୍ଧାରିତ ତାରିଖ'
 });
-
 i18n.addResources('en', 'translation', {
   pregnantWomen: 'Pregnant Women',
-  usgAppointments: 'USG Appointments',
+  usgAppointments: 'USG Appointments'
 });
-
 i18n.addResources('or', 'translation', {
   pregnantWomen: 'ଗର୍ଭବତୀ ମହିଳାମାନେ',
-  usgAppointments: 'USG ଆପଏଣ୍ଟମେଣ୍ଟ',
+  usgAppointments: 'USG ଆପଏଣ୍ଟମେଣ୍ଟ'
 });
-
 i18n.addResources('en', 'translation', {
-  reReferReasonOrObservation: 'Please provide detailed reason or enter observation notes:',
+  reReferReasonOrObservation: 'Please provide detailed reason'
 });
-
 i18n.addResources('or', 'translation', {
-  reReferReasonOrObservation: 'à¬¦à­Ÿà¬¾à¬•à¬°à¬¿ à¬¬à¬¿à¬¸à­à¬¤à­ƒà¬¤ à¬•à¬¾à¬°à¬£ à¬¦à¬¿à¬…à¬¨à­à¬¤à­ à¬•à¬¿à¬®à­à¬¬à¬¾ à¬ªà¬°à­à¬¯à­à¬Ÿà¬¬à­‡à¬•à­à¬·à¬£ à¬Ÿà¬¿à¬ªà­à¬ªà¬£à­€ à¬²à­‡à¬–à¬¨à­à¬¤à­:',
+  reReferReasonOrObservation: 'à¬¦à­Ÿà¬¾à¬•à¬°à¬¿ à¬¬à¬¿à¬¸à­à¬¤à­ƒà¬¤ à¬•à¬¾à¬°à¬£ à¬¦à¬¿à¬…à¬¨à­à¬¤à­ à¬•à¬¿à¬®à­à¬¬à¬¾ à¬ªà¬°à­à¬¯à­à¬Ÿà¬¬à­‡à¬•à­à¬·à¬£ à¬Ÿà¬¿à¬ªà­à¬ªà¬£à­€ à¬²à­‡à¬–à¬¨à­à¬¤à­:'
 });
-
+i18n.addResources('en', 'translation', {
+  info: 'Info',
+  validationError: 'Validation Error',
+  patient: 'Patient',
+  noMobile: 'No mobile',
+  selectedPatient: 'Selected Patient',
+  createEcgReport: 'Create ECG Report',
+  ecgReportWorkflow: 'ECG report workflow',
+  ecgDetails: 'ECG Details',
+  ecgDate: 'ECG Date',
+  ecgResult: 'ECG Result',
+  abnormal: 'Abnormal',
+  result: 'Result',
+  notesOptional: 'Notes (optional)',
+  replaceFile: 'Replace file',
+  uploadEcgReportFileOptional: 'Upload ECG report file (optional)',
+  allowedReportFileTypes: 'PDF, JPG, JPEG, PNG up to 10MB',
+  remove: 'Remove',
+  reportList: 'Report list',
+  detailView: 'Detail view',
+  recordedBy: 'Recorded By',
+  pregnantWomanId: 'Pregnant Woman ID',
+  auditInformation: 'Audit Information',
+  reportId: 'Report ID',
+  updatedAt: 'Updated At',
+  deliveryPoint: 'Delivery Point',
+  ecgReports: 'ECG Reports',
+  ecgReportDetail: 'ECG Report Detail',
+  loadingEcgReports: 'Loading ECG reports...',
+  noEcgReportsFound: 'No ECG reports found',
+  loadingEcgReportDetail: 'Loading ECG report detail...',
+  ecgReportDetailUnavailable: 'ECG report detail not available.',
+  failedToLoadEcgReports: 'Failed to load ECG reports',
+  failedToLoadEcgReportDetail: 'Failed to load ECG report detail.',
+  ecgReportIdMissing: 'ECG report id is missing.',
+  noReportFileAttached: 'No report file attached',
+  unableToOpenReportFile: 'Unable to open report file',
+  viewReportFile: 'View Report File',
+  viewOrDownloadEcgReport: 'View or Download ECG Report',
+  internetRequiredLoadEcgReports: 'Internet connection is required to load ECG reports.',
+  internetRequiredCreateEcgReports: 'Internet connection is required to create ECG reports.',
+  internetRequiredRefreshEcgDetail: 'Internet connection is required to refresh this report detail.',
+  ecgReportCreationRequiresInternet: 'ECG report creation currently requires internet connection.',
+  ecgOfflineCreateInfo: 'Offline mode: ECG reports you create here will be saved locally and synced when internet returns.',
+  ecgOfflineListInfo: 'Offline mode: showing cached ECG reports and any locally saved reports waiting to sync.',
+  ecgOfflineDetailInfo: 'Offline mode: showing cached ECG report details when available.',
+  pleaseSelectPatient: 'Please select a patient',
+  pleaseSelectEcgResult: 'Please select ECG result',
+  ecgReportCreatedSuccessfully: 'ECG report created successfully',
+  ecgReportSavedOfflineWillSync: 'ECG report saved offline and will sync when online.',
+  failedToCreateEcgReport: 'Failed to create ECG report',
+  searchByNameMobileOrRchId: 'Search by name, mobile, or RCH ID',
+  searchByPatientMobileDpOrResult: 'Search by patient, mobile, DP, or result',
+  fileTooLargeMax10MB: 'File too large. Maximum size: 10MB',
+  failedToPickImage: 'Failed to pick image',
+  failedToTakePhoto: 'Failed to take photo',
+  openEcgReportWorkflow: 'Open the ECG report workflow',
+  viewCreatedEcgReports: 'View created ECG reports',
+  ecgReportsCount: 'ECG Reports ({{count}})',
+  ecgEntryLabel: 'ECG {{count}}'
+});
+i18n.addResources('en', 'translation', {
+  abnormal: 'Abnormal'
+});
+i18n.addResources('or', 'translation', {
+  abnormal: 'ଅସାମାନ୍ୟ'
+});
+i18n.addResources('or', 'translation', {
+  info: 'ସୂଚନା',
+  validationError: 'ଯାଞ୍ଚ ତ୍ରୁଟି',
+  patient: 'ରୋଗୀ',
+  noMobile: 'ମୋବାଇଲ ନାହିଁ',
+  selectedPatient: 'ଚୟନିତ ରୋଗୀ',
+  createEcgReport: 'ECG ରିପୋର୍ଟ ସୃଷ୍ଟି କରନ୍ତୁ',
+  ecgReportWorkflow: 'ECG ରିପୋର୍ଟ କାର୍ଯ୍ୟପ୍ରବାହ',
+  ecgDetails: 'ECG ବିବରଣୀ',
+  ecgDate: 'ECG ତାରିଖ',
+  ecgResult: 'ECG ଫଳାଫଳ',
+  result: 'ଫଳାଫଳ',
+  notesOptional: 'ଟିପ୍ପଣୀ (ଇଚ୍ଛାନୁସାରେ)',
+  replaceFile: 'ଫାଇଲ ବଦଳାନ୍ତୁ',
+  uploadEcgReportFileOptional: 'ECG ରିପୋର୍ଟ ଫାଇଲ ଅପଲୋଡ୍ କରନ୍ତୁ (ଇଚ୍ଛାନୁସାରେ)',
+  allowedReportFileTypes: 'PDF, JPG, JPEG, PNG 10MB ପର୍ଯ୍ୟନ୍ତ',
+  remove: 'ହଟାନ୍ତୁ',
+  reportList: 'ରିପୋର୍ଟ ତାଲିକା',
+  detailView: 'ବିସ୍ତୃତ ଦୃଶ୍ୟ',
+  recordedBy: 'ରେକର୍ଡ କରିଥିବା',
+  pregnantWomanId: 'ଗର୍ଭବତୀ ମହିଳା ID',
+  auditInformation: 'ଅଡିଟ ସୂଚନା',
+  reportId: 'ରିପୋର୍ଟ ID',
+  updatedAt: 'ଅଦ୍ୟତନ ସମୟ',
+  deliveryPoint: 'ଡିଲିଭେରି ପଏଣ୍ଟ',
+  ecgReports: 'ECG ରିପୋର୍ଟଗୁଡିକ',
+  ecgReportDetail: 'ECG ରିପୋର୍ଟ ବିବରଣୀ',
+  loadingEcgReports: 'ECG ରିପୋର୍ଟ ଲୋଡ୍ ହେଉଛି...',
+  noEcgReportsFound: 'କୌଣସି ECG ରିପୋର୍ଟ ମିଳିଲା ନାହିଁ',
+  loadingEcgReportDetail: 'ECG ରିପୋର୍ଟ ବିବରଣୀ ଲୋଡ୍ ହେଉଛି...',
+  ecgReportDetailUnavailable: 'ECG ରିପୋର୍ଟ ବିବରଣୀ ଉପଲବ୍ଧ ନୁହେଁ।',
+  failedToLoadEcgReports: 'ECG ରିପୋର୍ଟ ଲୋଡ୍ କରିବାରେ ବିଫଳ',
+  failedToLoadEcgReportDetail: 'ECG ରିପୋର୍ଟ ବିବରଣୀ ଲୋଡ୍ କରିବାରେ ବିଫଳ।',
+  ecgReportIdMissing: 'ECG ରିପୋର୍ଟ ID ନାହିଁ।',
+  noReportFileAttached: 'କୌଣସି ରିପୋର୍ଟ ଫାଇଲ ସଂଲଗ୍ନ ନାହିଁ',
+  unableToOpenReportFile: 'ରିପୋର୍ଟ ଫାଇଲ ଖୋଲି ପାରିଲା ନାହିଁ',
+  viewReportFile: 'ରିପୋର୍ଟ ଫାଇଲ ଦେଖନ୍ତୁ',
+  viewOrDownloadEcgReport: 'ECG ରିପୋର୍ଟ ଦେଖନ୍ତୁ କିମ୍ବା ଡାଉନଲୋଡ୍ କରନ୍ତୁ',
+  internetRequiredLoadEcgReports: 'ECG ରିପୋର୍ଟ ଲୋଡ୍ କରିବା ପାଇଁ ଇଣ୍ଟରନେଟ୍ ଆବଶ୍ୟକ।',
+  internetRequiredCreateEcgReports: 'ECG ରିପୋର୍ଟ ସୃଷ୍ଟି ପାଇଁ ଇଣ୍ଟରନେଟ୍ ଆବଶ୍ୟକ।',
+  internetRequiredRefreshEcgDetail: 'ଏହି ରିପୋର୍ଟ ବିବରଣୀ ରିଫ୍ରେଶ କରିବା ପାଇଁ ଇଣ୍ଟରନେଟ୍ ଆବଶ୍ୟକ।',
+  ecgReportCreationRequiresInternet: 'ECG ରିପୋର୍ଟ ସୃଷ୍ଟି ପାଇଁ ବର୍ତ୍ତମାନ ଇଣ୍ଟରନେଟ୍ ଆବଶ୍ୟକ।',
+  ecgOfflineCreateInfo: 'ଅଫଲାଇନ ମୋଡ୍: ଏଠାରେ ସୃଷ୍ଟି ହୋଇଥିବା ECG ରିପୋର୍ଟଗୁଡିକ ସ୍ଥାନୀୟଭାବେ ସଞ୍ଚୟ ହେବ ଏବଂ ଇଣ୍ଟରନେଟ୍ ଫେରିଲେ ସିଙ୍କ ହେବ।',
+  ecgOfflineListInfo: 'ଅଫଲାଇନ ମୋଡ୍: କ୍ୟାଶ ହୋଇଥିବା ECG ରିପୋର୍ଟ ଏବଂ ସିଙ୍କ ଅପେକ୍ଷାରତ ସ୍ଥାନୀୟ ରିପୋର୍ଟ ଦେଖାଯାଉଛି।',
+  ecgOfflineDetailInfo: 'ଅଫଲାଇନ ମୋଡ୍: ଉପଲବ୍ଧ ଥିଲେ କ୍ୟାଶ ହୋଇଥିବା ECG ରିପୋର୍ଟ ବିବରଣୀ ଦେଖାଯାଉଛି।',
+  pleaseSelectPatient: 'ଦୟାକରି ଜଣେ ରୋଗୀ ବାଛନ୍ତୁ',
+  pleaseSelectEcgResult: 'ଦୟାକରି ECG ଫଳାଫଳ ବାଛନ୍ତୁ',
+  ecgReportCreatedSuccessfully: 'ECG ରିପୋର୍ଟ ସଫଳଭାବେ ସୃଷ୍ଟି ହେଲା',
+  ecgReportSavedOfflineWillSync: 'ECG ରିପୋର୍ଟ ଅଫଲାଇନରେ ସଞ୍ଚୟ ହୋଇଛି ଏବଂ ଅନଲାଇନ୍ ହେଲେ ସିଙ୍କ ହେବ।',
+  failedToCreateEcgReport: 'ECG ରିପୋର୍ଟ ସୃଷ୍ଟି କରିବାରେ ବିଫଳ',
+  searchByNameMobileOrRchId: 'ନାମ, ମୋବାଇଲ କିମ୍ବା RCH ID ଦ୍ୱାରା ଖୋଜନ୍ତୁ',
+  searchByPatientMobileDpOrResult: 'ରୋଗୀ, ମୋବାଇଲ, DP କିମ୍ବା ଫଳାଫଳ ଦ୍ୱାରା ଖୋଜନ୍ତୁ',
+  fileTooLargeMax10MB: 'ଫାଇଲ ବହୁତ ବଡ଼। ସର୍ବାଧିକ ଆକାର: 10MB',
+  failedToPickImage: 'ଛବି ବାଛିବାରେ ବିଫଳ',
+  failedToTakePhoto: 'ଫଟୋ ନେବାରେ ବିଫଳ',
+  openEcgReportWorkflow: 'ECG ରିପୋର୍ଟ କାର୍ଯ୍ୟପ୍ରବାହ ଖୋଲନ୍ତୁ',
+  viewCreatedEcgReports: 'ସୃଷ୍ଟି ହୋଇଥିବା ECG ରିପୋର୍ଟଗୁଡିକ ଦେଖନ୍ତୁ',
+  ecgReportsCount: 'ECG ରିପୋର୍ଟଗୁଡିକ ({{count}})',
+  ecgEntryLabel: 'ECG {{count}}'
+});
 export default i18n;
-
-
-
-
 i18n.addResources('en', 'translation', {
   registrationSuccessful: 'Registration Successful!',
   registrationReceivedSuccessfully: 'Your information has been received successfully. You don\'t need to do anything else.',
   visitWebsiteForStatus: 'Please visit website to check status of your registration and find more details. ASHA Didi or ANM will call you.',
   visitWebsite: 'Visit Website',
-  close: 'Close',
+  close: 'Close'
 });
-
 i18n.addResources('or', 'translation', {
   registrationSuccessful: 'ପଞ୍ଜୀକରଣ ସଫଳ!',
   registrationReceivedSuccessfully: 'ଆପଣଙ୍କ ସୂଚନା ସଫଳଭାବେ ଗ୍ରହଣ କରାଯାଇଛି। ଆପଣଙ୍କୁ ଆଉ କିଛି କରିବାର ଆବଶ୍ୟକତା ନାହିଁ।',
   visitWebsiteForStatus: 'ଆପଣଙ୍କ ପଞ୍ଜୀକରଣର ସ୍ଥିତି ଯାଞ୍ଚ କରିବା ଏବଂ ଅଧିକ ବିବରଣୀ ପାଇବା ପାଇଁ ଦୟାକରି ୱେବସାଇଟ୍ ପରିଦର୍ଶନ କରନ୍ତୁ। ASHA ଦିଦି କିମ୍ବା ANM ଆପଣଙ୍କୁ କଲ୍ କରିବେ।',
   visitWebsite: 'ୱେବସାଇଟ୍ ପରିଦର୍ଶନ କରନ୍ତୁ',
-  close: 'ବନ୍ଦ କରନ୍ତୁ',
+  close: 'ବନ୍ଦ କରନ୍ତୁ'
 });
 i18n.addResources('en', 'translation', {
   referralInformation: 'Referral Information',
   highPriority: 'High Priority',
-  referringDeliveryPoint: 'Referring Delivery Point',
+  referringDeliveryPoint: 'Referring DP Referral',
   referralRoute: 'Referral Route',
   referredFrom: 'Referred From',
   referredTo: 'Referred To',
   stepLabel: 'Step',
   referralStepLabel: 'Referral Step',
   referringInformation: 'Referring Information',
-  referredBy: 'Referred By',
+  referredBy: 'Referred By'
 });
-
 i18n.addResources('or', 'translation', {
   referralInformation: 'ରେଫରାଲ ସୂଚନା',
   highPriority: 'ଉଚ୍ଚ ଗୁରୁତ୍ୱ',
@@ -1860,5 +2064,58 @@ i18n.addResources('or', 'translation', {
   stepLabel: 'ପଦକ୍ଷେପ',
   referralStepLabel: 'ରେଫରାଲ ପଦକ୍ଷେପ',
   referringInformation: 'ରେଫର୍ ସମ୍ବନ୍ଧୀୟ ସୂଚନା',
-  referredBy: 'କାହା ଦ୍ୱାରା ରେଫର୍',
+  referredBy: 'କାହା ଦ୍ୱାରା ରେଫର୍'
 });
+i18n.addResources('en', 'translation', {
+  selectDeliveryPointRequired: 'Please select a delivery point',
+  observationNotesRequired: 'Please enter observation notes',
+  patientInfoUnavailableRefresh: 'Patient information not available. Please refresh.',
+  syncBeneficiaryBeforeReferral: 'This patient registration is not synced yet. Please sync the beneficiary first, then create the delivery referral.',
+  activeReferralCreatedWhileEditing: 'An active referral was created while you were filling the form. Please refresh and try again.',
+  deliveryReferralCreatedSuccessfully: 'Delivery referral created successfully!',
+  deliveryReferralSavedOffline: 'Delivery referral saved offline and will sync when online.',
+  activeDeliveryReferralAlreadyExists: 'An active delivery referral already exists for this beneficiary. Please open the existing referral instead of creating a new one.',
+  selectDeliveryPointRequiredLabel: 'Select Delivery Point *',
+  currentDeliveryPointLabel: 'Current DP: {{name}}',
+  searchDeliveryPoints: 'Search delivery points...',
+  noDeliveryPointsMatchSearch: 'No delivery points found matching your search',
+  noDeliveryPointsAvailable: 'No delivery points available',
+  observationNotesRequiredLabel: 'Observation Notes *',
+  observationNotesPlaceholder: 'Enter observation notes, reason for referral, and any important medical information...',
+  createReferralButton: 'Create Referral'
+});
+i18n.addResources('or', 'translation', {
+  selectDeliveryPointRequired: 'ଦୟାକରି ଏକ ଡିଲିଭରି ପଏଣ୍ଟ ବାଛନ୍ତୁ',
+  observationNotesRequired: 'ଦୟାକରି ପର୍ଯ୍ୟବେକ୍ଷଣ ଟିପ୍ପଣୀ ଲେଖନ୍ତୁ',
+  patientInfoUnavailableRefresh: 'ରୋଗୀର ସୂଚନା ଉପଲବ୍ଧ ନାହିଁ। ଦୟାକରି ରିଫ୍ରେଶ କରନ୍ତୁ।',
+  syncBeneficiaryBeforeReferral: 'ଏହି ରୋଗୀର ପଞ୍ଜୀକରଣ ଏପର୍ଯ୍ୟନ୍ତ ସିଙ୍କ ହୋଇନାହିଁ। ପ୍ରଥମେ ଲାଭାର୍ଥୀକୁ ସିଙ୍କ କରନ୍ତୁ, ତା’ପରେ ଡିଲିଭରି ରେଫରାଲ ସୃଷ୍ଟି କରନ୍ତୁ।',
+  activeReferralCreatedWhileEditing: 'ଆପଣ ଫର୍ମ ଭରୁଥିବା ସମୟରେ ଏକ ସକ୍ରିୟ ରେଫରାଲ ସୃଷ୍ଟି ହୋଇଯାଇଛି। ଦୟାକରି ରିଫ୍ରେଶ କରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।',
+  deliveryReferralCreatedSuccessfully: 'ଡିଲିଭରି ରେଫରାଲ ସଫଳଭାବେ ସୃଷ୍ଟି ହେଲା!',
+  deliveryReferralSavedOffline: 'ଡିଲିଭରି ରେଫରାଲ ଅଫଲାଇନ୍ ସଞ୍ଚୟ ହେଲା ଏବଂ ଅନଲାଇନ୍ ହେଲେ ସିଙ୍କ ହେବ।',
+  activeDeliveryReferralAlreadyExists: 'ଏହି ଲାଭାର୍ଥୀ ପାଇଁ ଏକ ସକ୍ରିୟ ଡିଲିଭରି ରେଫରାଲ ଆଗରୁ ଅଛି। ନୂତନ ସୃଷ୍ଟି କରିବା ପରିବର୍ତ୍ତେ ଦୟାକରି ପୂର୍ବରୁ ଥିବା ରେଫରାଲ ଖୋଲନ୍ତୁ।',
+  selectDeliveryPointRequiredLabel: 'ଡିଲିଭରି ପଏଣ୍ଟ ବାଛନ୍ତୁ *',
+  currentDeliveryPointLabel: 'ବର୍ତ୍ତମାନ DP: {{name}}',
+  searchDeliveryPoints: 'ଡିଲିଭରି ପଏଣ୍ଟ ଖୋଜନ୍ତୁ...',
+  noDeliveryPointsMatchSearch: 'ଆପଣଙ୍କ ଖୋଜ ଅନୁସାରେ କୌଣସି ଡିଲିଭରି ପଏଣ୍ଟ ମିଳିଲା ନାହିଁ',
+  noDeliveryPointsAvailable: 'କୌଣସି ଡିଲିଭରି ପଏଣ୍ଟ ଉପଲବ୍ଧ ନାହିଁ',
+  observationNotesRequiredLabel: 'ପର୍ଯ୍ୟବେକ୍ଷଣ ଟିପ୍ପଣୀ *',
+  observationNotesPlaceholder: 'ପର୍ଯ୍ୟବେକ୍ଷଣ ଟିପ୍ପଣୀ, ରେଫରାଲର କାରଣ ଏବଂ ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ ଚିକିତ୍ସା ସୂଚନା ଲେଖନ୍ତୁ...',
+  createReferralButton: 'ରେଫରାଲ ସୃଷ୍ଟି କରନ୍ତୁ'
+});
+i18n.addResources('en', 'translation', {
+  selectDeliveryPointRequired: 'Please select a DP referral',
+  selectDeliveryPointRequiredLabel: 'Select DP Referral *',
+  currentDeliveryPointLabel: 'Current DP Referral: {{name}}',
+  searchDeliveryPoints: 'Search DP referrals...',
+  noDeliveryPointsMatchSearch: 'No DP referrals found matching your search',
+  noDeliveryPointsAvailable: 'No DP referrals available'
+});
+i18n.addResources('or', 'translation', {
+  selectDeliveryPointRequired: 'ଦୟାକରି ଏକ DP ରେଫରାଲ ବାଛନ୍ତୁ',
+  selectDeliveryPointRequiredLabel: 'DP ରେଫରାଲ ବାଛନ୍ତୁ *',
+  currentDeliveryPointLabel: 'ବର୍ତ୍ତମାନ DP ରେଫରାଲ: {{name}}',
+  searchDeliveryPoints: 'DP ରେଫରାଲ ଖୋଜନ୍ତୁ...',
+  noDeliveryPointsMatchSearch: 'ଆପଣଙ୍କ ଖୋଜ ଅନୁସାରେ କୌଣସି DP ରେଫରାଲ ମିଳିଲା ନାହିଁ',
+  noDeliveryPointsAvailable: 'କୌଣସି DP ରେଫରାଲ ଉପଲବ୍ଧ ନାହିଁ'
+});
+

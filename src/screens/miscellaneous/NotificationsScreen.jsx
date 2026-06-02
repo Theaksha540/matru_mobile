@@ -7,82 +7,57 @@ import { secureStorage } from '../../utils/secureStorage';
 import { pregnantWomenAPI } from '../../services/api';
 import { syncService } from '../../utils/syncService';
 import { useTranslation } from 'react-i18next';
-
-const NotificationsScreen = ({ navigation }) => {
-  const { t } = useTranslation();
-  const { unreadCount, notifications, fetchUnreadCount, fetchNotifications, markAsRead, markAllAsRead } = useNotifications();
+const NotificationsScreen = ({
+  navigation
+}) => {
+  const {
+    t
+  } = useTranslation();
+  const {
+    unreadCount,
+    notifications,
+    fetchUnreadCount,
+    fetchNotifications,
+    markAsRead,
+    markAllAsRead
+  } = useNotifications();
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState('all');
-
-  const allowedRoutes = new Set([
-    'DistrictDashboard',
-    'DPDashboard',
-    'BlockDashboard',
-    'SubCentreDashboard',
-    'USGDashboard',
-    'MotherDashboard',
-    'PatientList',
-    'PendingApproval',
-    'PendingApprovalDetail',
-    'AppointmentDetail',
-    'USGAppointmentsList',
-    'AllReports',
-    'CompletedReports',
-    'DistrictReports',
-    'BlockReports',
-    'PerformanceTrends',
-    'HighRiskCases',
-    'GrievanceHandling',
-    'GrievanceDetail',
-    'ANCTracking',
-    'ANCTrackingBlock',
-    'RegisterPregnancy',
-    'DeliveryReferrals',
-    'PendingReferrals',
-    'ReferralDetail',
-    'ReReferredCases',
-  ]);
-
+  const allowedRoutes = new Set(['DistrictDashboard', 'DPDashboard', 'BlockDashboard', 'SubCentreDashboard', 'USGDashboard', 'MotherDashboard', 'PatientList', 'PendingApproval', 'PendingApprovalDetail', 'AppointmentDetail', 'USGAppointmentsList', 'AllReports', 'CompletedReports', 'DistrictReports', 'BlockReports', 'PerformanceTrends', 'HighRiskCases', 'GrievanceHandling', 'GrievanceDetail', 'ANCTracking', 'ANCTrackingBlock', 'RegisterPregnancy', 'DeliveryReferrals', 'PendingReferrals', 'ReferralDetail', 'ReReferredCases']);
   useEffect(() => {
     loadNotifications();
   }, [filter]);
-
   const loadNotifications = async () => {
     try {
-      const params = filter === 'unread' ? { is_read: false } : {};
+      const params = filter === 'unread' ? {
+        is_read: false
+      } : {};
       await fetchNotifications(params);
-    } catch (error) {
-      console.error('Error loading notifications:', error);
-    } finally {
+    } catch (error) {} finally {
       setRefreshing(false);
     }
   };
-
   const onRefresh = () => {
     setRefreshing(true);
     loadNotifications();
     fetchUnreadCount();
   };
-
-  const handleMarkAsRead = async (id) => {
+  const handleMarkAsRead = async id => {
     await markAsRead(id);
     loadNotifications();
     fetchUnreadCount();
   };
-
   const handleMarkAllAsRead = async () => {
     await markAllAsRead();
     loadNotifications();
     fetchUnreadCount();
   };
-
-  const toNumber = (value) => {
+  const toNumber = value => {
     if (value === null || value === undefined) return null;
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : null;
   };
-
-  const parseObjectIfJson = (value) => {
+  const parseObjectIfJson = value => {
     if (!value) return null;
     if (typeof value === 'object') return value;
     if (typeof value === 'string') {
@@ -95,7 +70,6 @@ const NotificationsScreen = ({ navigation }) => {
     }
     return null;
   };
-
   const pickNumberFromObject = (obj, keys = []) => {
     if (!obj || typeof obj !== 'object') return null;
     for (const key of keys) {
@@ -104,8 +78,7 @@ const NotificationsScreen = ({ navigation }) => {
     }
     return null;
   };
-
-  const normalizeMobile = (value) => {
+  const normalizeMobile = value => {
     const digits = String(value || '').replace(/\D/g, '');
     if (!digits) return null;
     if (digits.length === 10) return digits;
@@ -113,10 +86,8 @@ const NotificationsScreen = ({ navigation }) => {
     if (digits.length > 10) return digits.slice(-10);
     return null;
   };
-
   const findMobileInObject = (obj, depth = 0) => {
     if (!obj || typeof obj !== 'object' || depth > 4) return null;
-
     if (Array.isArray(obj)) {
       for (const item of obj) {
         const nested = findMobileInObject(item, depth + 1);
@@ -124,336 +95,196 @@ const NotificationsScreen = ({ navigation }) => {
       }
       return null;
     }
-
     for (const [key, value] of Object.entries(obj)) {
       if (value === null || value === undefined) continue;
-
       if (typeof value === 'string' || typeof value === 'number') {
         if (/mobile|phone|contact/i.test(key)) {
           const normalized = normalizeMobile(value);
           if (normalized) return normalized;
         }
       }
-
       if (typeof value === 'object') {
         const nested = findMobileInObject(value, depth + 1);
         if (nested) return nested;
       }
     }
-
     return null;
   };
-
-  const extractMobileFromText = (text) => {
+  const extractMobileFromText = text => {
     const raw = String(text || '');
     const segments = raw.match(/[\d+\-\s()]{10,}/g) || [];
     for (const segment of segments) {
       const normalized = normalizeMobile(segment);
       if (normalized) return normalized;
     }
-
     const compact = normalizeMobile(raw);
     return compact || null;
   };
-  
-  const extractPatientNameFromMessage = (message) => {
+  const extractPatientNameFromMessage = message => {
     if (!message) return null;
-    
+
     // Pattern: "NAME has been marked as high-risk"
     const pattern1 = /^([A-Z\s]+)\s+has been marked as high-risk/i;
     const match1 = message.match(pattern1);
     if (match1 && match1[1]) {
       return match1[1].trim();
     }
-    
+
     // Pattern: "Patient NAME needs attention"
     const pattern2 = /Patient\s+([A-Z\s]+)\s+needs/i;
     const match2 = message.match(pattern2);
     if (match2 && match2[1]) {
       return match2[1].trim();
     }
-    
+
     // Pattern: "Check patient NAME"
     const pattern3 = /Check patient\s+([A-Z\s]+)/i;
     const match3 = message.match(pattern3);
     if (match3 && match3[1]) {
       return match3[1].trim();
     }
-    
     return null;
   };
-
   const resolvePendingApprovalPatientId = async (notification, candidateId = null) => {
     try {
       const data = await syncService.getPendingApprovals();
       const list = Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : [];
-      console.log('[NOTIF-APPROVAL] resolving pending approval id', {
-        notificationId: notification?.id,
-        candidateId,
-        pendingApprovalsCount: list.length,
-        notificationReferenceId: notification?.reference_id,
-        notificationPatientId:
-          notification?.pregnant_woman_id ??
-          notification?.patient_id ??
-          notification?.beneficiary_id ??
-          notification?.entity_id,
-      });
       if (!list.length) {
-        return { patientId: null, matched: false };
+        return {
+          patientId: null,
+          matched: false
+        };
       }
-
-      const payload =
-        parseObjectIfJson(notification?.payload) ||
-        parseObjectIfJson(notification?.metadata) ||
-        parseObjectIfJson(notification?.data) ||
-        null;
-
+      const payload = parseObjectIfJson(notification?.payload) || parseObjectIfJson(notification?.metadata) || parseObjectIfJson(notification?.data) || null;
       const normalizedCandidateId = toNumber(candidateId);
       if (normalizedCandidateId !== null) {
-        const directMatch = list.find((item) => toNumber(item?.id) === normalizedCandidateId);
+        const directMatch = list.find(item => toNumber(item?.id) === normalizedCandidateId);
         if (directMatch?.id) {
-          console.log('[NOTIF-APPROVAL] matched pending approval by direct id', {
-            notificationId: notification?.id,
-            resolvedPatientId: directMatch.id,
-          });
-          return { patientId: directMatch.id, matched: true };
+          return {
+            patientId: directMatch.id,
+            matched: true
+          };
         }
-
-        const alternateMatch = list.find((item) => {
-          const possibleIds = [
-            item?.pregnant_woman_id,
-            item?.patient_id,
-            item?.beneficiary_id,
-            item?.reference_id,
-            item?.entity_id,
-          ]
-            .map(toNumber)
-            .filter((value) => value !== null);
+        const alternateMatch = list.find(item => {
+          const possibleIds = [item?.pregnant_woman_id, item?.patient_id, item?.beneficiary_id, item?.reference_id, item?.entity_id].map(toNumber).filter(value => value !== null);
           return possibleIds.includes(normalizedCandidateId);
         });
         if (alternateMatch?.id) {
-          console.log('[NOTIF-APPROVAL] matched pending approval by alternate linked id', {
-            notificationId: notification?.id,
-            candidateId: normalizedCandidateId,
-            resolvedPatientId: alternateMatch.id,
-          });
-          return { patientId: alternateMatch.id, matched: true };
+          return {
+            patientId: alternateMatch.id,
+            matched: true
+          };
         }
       }
-
-      const mobileHint = normalizeMobile(
-        notification?.mobile_number ||
-        notification?.patient_mobile ||
-        notification?.beneficiary_mobile ||
-        payload?.mobile_number ||
-        payload?.patient_mobile ||
-        payload?.beneficiary_mobile ||
-        payload?.phone ||
-        payload?.contact_number ||
-        findMobileInObject(payload) ||
-        extractMobileFromText(notification?.title) ||
-        extractMobileFromText(notification?.message)
-      );
+      const mobileHint = normalizeMobile(notification?.mobile_number || notification?.patient_mobile || notification?.beneficiary_mobile || payload?.mobile_number || payload?.patient_mobile || payload?.beneficiary_mobile || payload?.phone || payload?.contact_number || findMobileInObject(payload) || extractMobileFromText(notification?.title) || extractMobileFromText(notification?.message));
       if (mobileHint) {
-        const mobileMatch = list.find((item) => normalizeMobile(item?.mobile_number) === mobileHint);
+        const mobileMatch = list.find(item => normalizeMobile(item?.mobile_number) === mobileHint);
         if (mobileMatch?.id) {
-          console.log('[NOTIF-APPROVAL] matched pending approval by mobile', {
-            notificationId: notification?.id,
-            mobileHint,
-            resolvedPatientId: mobileMatch.id,
-          });
-          return { patientId: mobileMatch.id, matched: true };
+          return {
+            patientId: mobileMatch.id,
+            matched: true
+          };
         }
       }
-
-      const nameHint = String(
-        notification?.full_name ||
-        notification?.patient_name ||
-        payload?.full_name ||
-        payload?.patient_name ||
-        ''
-      )
-        .trim()
-        .toLowerCase();
+      const nameHint = String(notification?.full_name || notification?.patient_name || payload?.full_name || payload?.patient_name || '').trim().toLowerCase();
       if (nameHint) {
-        const nameMatch = list.find((item) => String(item?.full_name || '').trim().toLowerCase() === nameHint);
+        const nameMatch = list.find(item => String(item?.full_name || '').trim().toLowerCase() === nameHint);
         if (nameMatch?.id) {
-          console.log('[NOTIF-APPROVAL] matched pending approval by name', {
-            notificationId: notification?.id,
-            nameHint,
-            resolvedPatientId: nameMatch.id,
-          });
-          return { patientId: nameMatch.id, matched: true };
+          return {
+            patientId: nameMatch.id,
+            matched: true
+          };
         }
       }
-
-      console.log('[NOTIF-APPROVAL] no valid pending approval match found', {
-        notificationId: notification?.id,
-        fallbackCandidateId: candidateId,
-      });
-      return { patientId: null, matched: false };
+      return {
+        patientId: null,
+        matched: false
+      };
     } catch (error) {
-      console.error('Error resolving pending approval patient id:', error);
-      return { patientId: null, matched: false };
+      return {
+        patientId: null,
+        matched: false
+      };
     }
   };
-
   const resolveReferralIdFromNotification = async (notification, candidateId = null) => {
     try {
       const data = await syncService.getDeliveryReferrals();
-      const list = Array.isArray(data)
-        ? data
-        : Array.isArray(data?.items)
-          ? data.items
-          : [];
-
-      const payload =
-        parseObjectIfJson(notification?.payload) ||
-        parseObjectIfJson(notification?.metadata) ||
-        parseObjectIfJson(notification?.data) ||
-        null;
-
+      const list = Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : [];
+      const payload = parseObjectIfJson(notification?.payload) || parseObjectIfJson(notification?.metadata) || parseObjectIfJson(notification?.data) || null;
       const normalizedCandidateId = toNumber(candidateId);
-      console.log('[NOTIF-REFERRAL] resolving referral id', {
-        notificationId: notification?.id,
-        candidateId: normalizedCandidateId,
-        referralsCount: list.length,
-      });
-
       if (!list.length) {
-        return { referralId: null, matched: false };
+        return {
+          referralId: null,
+          matched: false
+        };
       }
-
       if (normalizedCandidateId !== null) {
-        const directMatch = list.find((item) => toNumber(item?.id) === normalizedCandidateId);
+        const directMatch = list.find(item => toNumber(item?.id) === normalizedCandidateId);
         if (directMatch?.id) {
-          console.log('[NOTIF-REFERRAL] matched referral by direct id', {
-            notificationId: notification?.id,
-            resolvedReferralId: directMatch.id,
-          });
-          return { referralId: directMatch.id, matched: true };
+          return {
+            referralId: directMatch.id,
+            matched: true
+          };
         }
-
-        const alternateMatch = list.find((item) => {
-          const possibleIds = [
-            item?.reference_id,
-            item?.delivery_referral_id,
-            item?.referral_id,
-            item?.previous_referral_id,
-            item?.pregnant_woman_id,
-            item?.patient_id,
-          ]
-            .map(toNumber)
-            .filter((value) => value !== null);
+        const alternateMatch = list.find(item => {
+          const possibleIds = [item?.reference_id, item?.delivery_referral_id, item?.referral_id, item?.previous_referral_id, item?.pregnant_woman_id, item?.patient_id].map(toNumber).filter(value => value !== null);
           return possibleIds.includes(normalizedCandidateId);
         });
         if (alternateMatch?.id) {
-          console.log('[NOTIF-REFERRAL] matched referral by alternate linked id', {
-            notificationId: notification?.id,
-            candidateId: normalizedCandidateId,
-            resolvedReferralId: alternateMatch.id,
-          });
-          return { referralId: alternateMatch.id, matched: true };
+          return {
+            referralId: alternateMatch.id,
+            matched: true
+          };
         }
-
-        const chainMatch = list.find((item) => {
+        const chainMatch = list.find(item => {
           const chain = Array.isArray(item?.referral_chain) ? item.referral_chain : [];
-          return chain.some((step) => {
-            const chainIds = [
-              step?.referral_id,
-              step?.previous_referral_id,
-              step?.reference_id,
-            ]
-              .map(toNumber)
-              .filter((value) => value !== null);
+          return chain.some(step => {
+            const chainIds = [step?.referral_id, step?.previous_referral_id, step?.reference_id].map(toNumber).filter(value => value !== null);
             return chainIds.includes(normalizedCandidateId);
           });
         });
         if (chainMatch?.id) {
-          console.log('[NOTIF-REFERRAL] matched referral by referral chain id', {
-            notificationId: notification?.id,
-            candidateId: normalizedCandidateId,
-            resolvedReferralId: chainMatch.id,
-          });
-          return { referralId: chainMatch.id, matched: true };
+          return {
+            referralId: chainMatch.id,
+            matched: true
+          };
         }
       }
-
-      const mobileHint = normalizeMobile(
-        notification?.mobile_number ||
-        notification?.patient_mobile ||
-        notification?.beneficiary_mobile ||
-        payload?.mobile_number ||
-        payload?.patient_mobile ||
-        payload?.beneficiary_mobile ||
-        payload?.phone ||
-        payload?.contact_number ||
-        findMobileInObject(payload) ||
-        extractMobileFromText(notification?.title) ||
-        extractMobileFromText(notification?.message)
-      );
+      const mobileHint = normalizeMobile(notification?.mobile_number || notification?.patient_mobile || notification?.beneficiary_mobile || payload?.mobile_number || payload?.patient_mobile || payload?.beneficiary_mobile || payload?.phone || payload?.contact_number || findMobileInObject(payload) || extractMobileFromText(notification?.title) || extractMobileFromText(notification?.message));
       if (mobileHint) {
-        const mobileMatch = list.find((item) => {
-          const referralMobile = normalizeMobile(
-            item?.mobile_number ||
-            item?.patient_mobile ||
-            item?.beneficiary_mobile ||
-            item?.pregnant_woman_mobile
-          );
+        const mobileMatch = list.find(item => {
+          const referralMobile = normalizeMobile(item?.mobile_number || item?.patient_mobile || item?.beneficiary_mobile || item?.pregnant_woman_mobile);
           return referralMobile === mobileHint;
         });
         if (mobileMatch?.id) {
-          console.log('[NOTIF-REFERRAL] matched referral by mobile', {
-            notificationId: notification?.id,
-            mobileHint,
-            resolvedReferralId: mobileMatch.id,
-          });
-          return { referralId: mobileMatch.id, matched: true };
+          return {
+            referralId: mobileMatch.id,
+            matched: true
+          };
         }
       }
-
-      const nameHint = String(
-        notification?.full_name ||
-        notification?.patient_name ||
-        payload?.full_name ||
-        payload?.patient_name ||
-        ''
-      )
-        .trim()
-        .toLowerCase();
+      const nameHint = String(notification?.full_name || notification?.patient_name || payload?.full_name || payload?.patient_name || '').trim().toLowerCase();
       if (nameHint) {
-        const nameMatch = list.find((item) =>
-          [
-            item?.full_name,
-            item?.patient_name,
-            item?.pregnant_woman_name,
-            item?.beneficiary_name,
-          ]
-            .filter(Boolean)
-            .map((value) => String(value).trim().toLowerCase())
-            .includes(nameHint)
-        );
+        const nameMatch = list.find(item => [item?.full_name, item?.patient_name, item?.pregnant_woman_name, item?.beneficiary_name].filter(Boolean).map(value => String(value).trim().toLowerCase()).includes(nameHint));
         if (nameMatch?.id) {
-          console.log('[NOTIF-REFERRAL] matched referral by name', {
-            notificationId: notification?.id,
-            nameHint,
-            resolvedReferralId: nameMatch.id,
-          });
-          return { referralId: nameMatch.id, matched: true };
+          return {
+            referralId: nameMatch.id,
+            matched: true
+          };
         }
       }
-
-      console.log('[NOTIF-REFERRAL] no valid referral match found', {
-        notificationId: notification?.id,
-        fallbackCandidateId: candidateId,
-      });
-      return { referralId: null, matched: false };
+      return {
+        referralId: null,
+        matched: false
+      };
     } catch (error) {
-      console.error('Error resolving referral id from notification:', error);
-      return { referralId: null, matched: false };
+      return {
+        referralId: null,
+        matched: false
+      };
     }
   };
-
   const getDashboardRouteByRole = async () => {
     const userInfo = await secureStorage.getItem('user_info');
     const roleNavigation = {
@@ -462,14 +293,13 @@ const NotificationsScreen = ({ navigation }) => {
       block: 'BlockDashboard',
       sub_centre: 'SubCentreDashboard',
       usg_centre: 'USGDashboard',
-      mother: 'MotherDashboard',
+      mother: 'MotherDashboard'
     };
     return roleNavigation[userInfo?.role] || 'DistrictDashboard';
   };
-
-  const extractAppointmentIdFromActionUrl = (actionUrl) => {
+  const extractAppointmentIdFromActionUrl = actionUrl => {
     if (!actionUrl || typeof actionUrl !== 'string') return null;
-    
+
     // Match patterns like /usg-appointments/96 or /appointments/96
     const match = actionUrl.match(/\/(?:usg-)?appointments?\/([0-9]+)/i);
     if (match && match[1]) {
@@ -478,10 +308,9 @@ const NotificationsScreen = ({ navigation }) => {
     }
     return null;
   };
-
-  const extractReferralIdFromActionUrl = (actionUrl) => {
+  const extractReferralIdFromActionUrl = actionUrl => {
     if (!actionUrl || typeof actionUrl !== 'string') return null;
-    
+
     // Match patterns like /delivery-referrals/48 or /referrals/48
     const match = actionUrl.match(/\/(?:delivery-)?referrals?\/([0-9]+)/i);
     if (match && match[1]) {
@@ -490,453 +319,224 @@ const NotificationsScreen = ({ navigation }) => {
     }
     return null;
   };
-
-  const extractReferralIdFromExtraData = (notification) => {
-    const payload =
-      parseObjectIfJson(notification?.payload) ||
-      parseObjectIfJson(notification?.metadata) ||
-      parseObjectIfJson(notification?.data) ||
-      parseObjectIfJson(notification?.extra_data) ||
-      null;
-    
+  const extractReferralIdFromExtraData = notification => {
+    const payload = parseObjectIfJson(notification?.payload) || parseObjectIfJson(notification?.metadata) || parseObjectIfJson(notification?.data) || parseObjectIfJson(notification?.extra_data) || null;
     if (!payload) return null;
-    
+
     // Try to find referral_id in extra_data/payload
-    const referralId = pickNumberFromObject(payload, [
-      'referral_id',
-      'delivery_referral_id',
-      'deliveryReferralId',
-    ]);
-    
+    const referralId = pickNumberFromObject(payload, ['referral_id', 'delivery_referral_id', 'deliveryReferralId']);
     return referralId;
   };
-
   const resolveNotificationNavigation = (notification, userRole = null) => {
-    const notificationText = [
-      notification?.category,
-      notification?.type,
-      notification?.title,
-      notification?.message,
-      notification?.module,
-      notification?.notification_type,
-      notification?.reference_type,
-      notification?.entity_type,
-    ]
-      .filter(Boolean)
-      .join(' ')
-      .toLowerCase();
+    const notificationText = [notification?.category, notification?.type, notification?.title, notification?.message, notification?.module, notification?.notification_type, notification?.reference_type, notification?.entity_type].filter(Boolean).join(' ').toLowerCase();
+    const directAppointmentId = toNumber(notification?.appointment_id) ?? toNumber(notification?.usg_appointment_id);
 
-    const directAppointmentId =
-      toNumber(notification?.appointment_id) ??
-      toNumber(notification?.usg_appointment_id);
-    
     // Extract appointment ID from action_url
     const actionUrlAppointmentId = extractAppointmentIdFromActionUrl(notification?.action_url);
-    
+
     // Enhanced grievance ID extraction
-    const grievanceId =
-      toNumber(notification?.grievance_id) ??
-      toNumber(notification?.ticket_id) ??
-      toNumber(notification?.complaint_id) ??
-      pickNumberFromObject(payload, [
-        'grievance_id',
-        'ticket_id',
-        'complaint_id',
-        'id',
-      ]);
-    
+    const grievanceId = toNumber(notification?.grievance_id) ?? toNumber(notification?.ticket_id) ?? toNumber(notification?.complaint_id) ?? pickNumberFromObject(payload, ['grievance_id', 'ticket_id', 'complaint_id', 'id']);
+
     // Extract referral ID from action_url if available
     const actionUrlReferralId = extractReferralIdFromActionUrl(notification?.action_url);
-    
+
     // Extract referral ID from extra_data if available
     const extraDataReferralId = extractReferralIdFromExtraData(notification);
-    
-    const referralId =
-      toNumber(notification?.delivery_referral_id) ??
-      toNumber(notification?.referral_id) ??
-      toNumber(notification?.deliveryReferralId) ??
-      toNumber(notification?.referral?.id) ??
-      extraDataReferralId ??
-      actionUrlReferralId;
+    const referralId = toNumber(notification?.delivery_referral_id) ?? toNumber(notification?.referral_id) ?? toNumber(notification?.deliveryReferralId) ?? toNumber(notification?.referral?.id) ?? extraDataReferralId ?? actionUrlReferralId;
     const referenceId = toNumber(notification?.reference_id);
-    const referralReferenceId =
-      referralId ??
-      pickNumberFromObject(payload, [
-        'referral_id',
-        'delivery_referral_id',
-      ]);
-    const payload =
-      parseObjectIfJson(notification?.payload) ||
-      parseObjectIfJson(notification?.metadata) ||
-      parseObjectIfJson(notification?.data) ||
-      null;
-    const payloadPatientId = pickNumberFromObject(payload, [
-      'patient_id',
-      'pregnant_woman_id',
-      'beneficiary_id',
-      'id',
-      'reference_id',
-      'entity_id',
-    ]);
-    const patientId =
-      toNumber(notification?.pregnant_woman_id) ??
-      toNumber(notification?.patient_id) ??
-      toNumber(notification?.beneficiary_id) ??
-      toNumber(notification?.entity_id) ??
-      toNumber(notification?.subject_id) ??
-      toNumber(notification?.target_id) ??
-      toNumber(notification?.pregnant_woman?.id) ??
-      toNumber(notification?.patient?.id) ??
-      payloadPatientId;
-
-    const explicitRoute =
-      notification?.screen_name ||
-      notification?.screen ||
-      notification?.route ||
-      notification?.target_screen;
-
+    const referralReferenceId = referralId ?? pickNumberFromObject(payload, ['referral_id', 'delivery_referral_id']);
+    const payload = parseObjectIfJson(notification?.payload) || parseObjectIfJson(notification?.metadata) || parseObjectIfJson(notification?.data) || null;
+    const payloadPatientId = pickNumberFromObject(payload, ['patient_id', 'pregnant_woman_id', 'beneficiary_id', 'id', 'reference_id', 'entity_id']);
+    const patientId = toNumber(notification?.pregnant_woman_id) ?? toNumber(notification?.patient_id) ?? toNumber(notification?.beneficiary_id) ?? toNumber(notification?.entity_id) ?? toNumber(notification?.subject_id) ?? toNumber(notification?.target_id) ?? toNumber(notification?.pregnant_woman?.id) ?? toNumber(notification?.patient?.id) ?? payloadPatientId;
+    const explicitRoute = notification?.screen_name || notification?.screen || notification?.route || notification?.target_screen;
     const category = String(notification?.category || '').toLowerCase();
     const type = String(notification?.type || '').toLowerCase();
-    const appointmentCategories = new Set([
-      'appointment',
-      'usg_appointment',
-      'appointment_status',
-      'appointment_update',
-      'usg_appointment_status',
-    ]);
-
-    const isAppointmentSignal =
-      appointmentCategories.has(category) ||
-      appointmentCategories.has(type) ||
-      /appointment|usg|scan|reschedule/.test(notificationText);
-    const notificationSearchHint = String(
-      notification?.mobile_number ||
-      notification?.patient_mobile ||
-      notification?.beneficiary_mobile ||
-      notification?.full_name ||
-      notification?.patient_name ||
-      ''
-    ).trim();
-    const patientSearchHintRaw = String(
-      notification?.mobile_number ||
-      notification?.patient_mobile ||
-      notification?.beneficiary_mobile ||
-      payload?.mobile_number ||
-      payload?.patient_mobile ||
-      payload?.beneficiary_mobile ||
-      payload?.phone ||
-      payload?.contact_number ||
-      findMobileInObject(payload) ||
-      extractMobileFromText(notificationText) ||
-      extractMobileFromText(notification?.title) ||
-      extractMobileFromText(notification?.message) ||
-      ''
-    ).trim();
+    const appointmentCategories = new Set(['appointment', 'usg_appointment', 'appointment_status', 'appointment_update', 'usg_appointment_status']);
+    const isAppointmentSignal = appointmentCategories.has(category) || appointmentCategories.has(type) || /appointment|usg|scan|reschedule/.test(notificationText);
+    const notificationSearchHint = String(notification?.mobile_number || notification?.patient_mobile || notification?.beneficiary_mobile || notification?.full_name || notification?.patient_name || '').trim();
+    const patientSearchHintRaw = String(notification?.mobile_number || notification?.patient_mobile || notification?.beneficiary_mobile || payload?.mobile_number || payload?.patient_mobile || payload?.beneficiary_mobile || payload?.phone || payload?.contact_number || findMobileInObject(payload) || extractMobileFromText(notificationText) || extractMobileFromText(notification?.title) || extractMobileFromText(notification?.message) || '').trim();
     const patientSearchHint = normalizeMobile(patientSearchHintRaw) || '';
     const referralMobileFilter = patientSearchHint || undefined;
-    const referralSearchHint = String(
-      patientSearchHint ||
-      notification?.mobile_number ||
-      notification?.patient_mobile ||
-      notification?.beneficiary_mobile ||
-      notification?.patient_name ||
-      notification?.full_name ||
-      payload?.mobile_number ||
-      payload?.patient_mobile ||
-      payload?.beneficiary_mobile ||
-      payload?.patient_name ||
-      payload?.full_name ||
-      ''
-    ).trim();
-    console.log('[NOTIF-ROUTE] mobile-hint', {
-      notificationId: notification?.id,
-      category,
-      type,
-      patientSearchHintRaw,
-      patientSearchHint,
-    });
-    const isScheduledAppointmentSignal =
-      /scheduled|schedule|booking request|new booking|new appointment|appointment booked|appointment scheduled/.test(notificationText) ||
-      category === 'scheduled' ||
-      type === 'scheduled' ||
-      category === 'appointment_scheduled' ||
-      type === 'appointment_scheduled';
-    const appointmentId =
-      actionUrlAppointmentId ??  // Priority 1: Extract from action_url
-      directAppointmentId ??     // Priority 2: Direct appointment_id field
-      (isAppointmentSignal ? toNumber(notification?.reference_id) : null);  // Priority 3: reference_id if appointment signal
-    const isGrievanceSignal =
-      grievanceId !== null || 
-      /grievance|complaint|ticket|issue|problem|feedback/.test(notificationText) ||
-      category === 'grievance' ||
-      type === 'grievance' ||
-      notification?.module === 'grievance' ||
-      notification?.entity_type === 'grievance';
+    const referralSearchHint = String(patientSearchHint || notification?.mobile_number || notification?.patient_mobile || notification?.beneficiary_mobile || notification?.patient_name || notification?.full_name || payload?.mobile_number || payload?.patient_mobile || payload?.beneficiary_mobile || payload?.patient_name || payload?.full_name || '').trim();
+    const isScheduledAppointmentSignal = /scheduled|schedule|booking request|new booking|new appointment|appointment booked|appointment scheduled/.test(notificationText) || category === 'scheduled' || type === 'scheduled' || category === 'appointment_scheduled' || type === 'appointment_scheduled';
+    const appointmentId = actionUrlAppointmentId ??
+    // Priority 1: Extract from action_url
+    directAppointmentId ?? (
+    // Priority 2: Direct appointment_id field
+    isAppointmentSignal ? toNumber(notification?.reference_id) : null); // Priority 3: reference_id if appointment signal
+    const isGrievanceSignal = grievanceId !== null || /grievance|complaint|ticket|issue|problem|feedback/.test(notificationText) || category === 'grievance' || type === 'grievance' || notification?.module === 'grievance' || notification?.entity_type === 'grievance';
     const isApprovalSignal = /approval|approve|register|registration|beneficiar|pregnan/.test(notificationText);
-    const isPendingApprovalSignal =
-      /(pending|awaiting).*(approval|approve|registration|register)/.test(notificationText) ||
-      /(approval|approve|registration|register).*(pending|awaiting)/.test(notificationText);
-    const isApprovedSignal =
-      /(approved|approval completed|registration approved|successfully approved)/.test(notificationText);
+    const isPendingApprovalSignal = /(pending|awaiting).*(approval|approve|registration|register)/.test(notificationText) || /(approval|approve|registration|register).*(pending|awaiting)/.test(notificationText);
+    const isApprovedSignal = /(approved|approval completed|registration approved|successfully approved)/.test(notificationText);
     const isNotApprovedSignal = /(not approved|unapproved|approval failed|approval rejected|rejected)/.test(notificationText);
     const approvalPatientId = patientId ?? referenceId;
     const isANCSignal = /anc|antenatal|visit/.test(notificationText);
-    const isHighRiskSignal = 
-      /high[_\s-]?risk/.test(notificationText) ||
-      notification?.notification_type === 'high_risk_alert' ||
-      notification?.notification_type === 'high_risk' ||
-      category === 'high_risk' ||
-      type === 'high_risk' ||
-      /high.risk.alert|high.risk.case|high.risk.identified/.test(notificationText);
+    const isHighRiskSignal = /high[_\s-]?risk/.test(notificationText) || notification?.notification_type === 'high_risk_alert' || notification?.notification_type === 'high_risk' || category === 'high_risk' || type === 'high_risk' || /high.risk.alert|high.risk.case|high.risk.identified/.test(notificationText);
     const isReportSignal = /report|result|scan report/.test(notificationText);
-    const isReferralOutcomeSignal =
-      /outcome|recorded outcome|delivery outcome|outcome recorded|maternal outcome|newborn outcome/.test(notificationText) ||
-      /outcome/.test(category) ||
-      /outcome/.test(type);
-    const hasReferralField =
-      referralId !== null ||
-      pickNumberFromObject(payload, ['referral_id', 'delivery_referral_id']) !== null ||
-      Boolean(notification?.referral) ||
-      isReferralOutcomeSignal ||
-      /referral|delivery_referral|re_referr/.test(
-        [
-          notification?.category,
-          notification?.type,
-          notification?.module,
-          notification?.notification_type,
-          notification?.reference_type,
-          notification?.entity_type,
-        ]
-          .filter(Boolean)
-          .join(' ')
-          .toLowerCase()
-      );
-    const isReferralSignal =
-      hasReferralField ||
-      /referral|re-referral|re referred|re_referred|delivery referral|delivery outcome|recorded outcome|outcome recorded/.test(notificationText);
-    const isPendingReferralSignal =
-      /pending referral|referral pending|awaiting referral|new referral/.test(notificationText);
-    const isReReferredSignal =
-      /re-referral|re referred|re_referred|re-referred/.test(notificationText);
-
+    const isReferralOutcomeSignal = /outcome|recorded outcome|delivery outcome|outcome recorded|maternal outcome|newborn outcome/.test(notificationText) || /outcome/.test(category) || /outcome/.test(type);
+    const hasReferralField = referralId !== null || pickNumberFromObject(payload, ['referral_id', 'delivery_referral_id']) !== null || Boolean(notification?.referral) || isReferralOutcomeSignal || /referral|delivery_referral|re_referr/.test([notification?.category, notification?.type, notification?.module, notification?.notification_type, notification?.reference_type, notification?.entity_type].filter(Boolean).join(' ').toLowerCase());
+    const isReferralSignal = hasReferralField || /referral|re-referral|re referred|re_referred|delivery referral|delivery outcome|recorded outcome|outcome recorded/.test(notificationText);
+    const isPendingReferralSignal = /pending referral|referral pending|awaiting referral|new referral/.test(notificationText);
+    const isReReferredSignal = /re-referral|re referred|re_referred|re-referred/.test(notificationText);
     if (isReferralSignal) {
       // Priority order: explicit referral ID > extra_data ID > action_url ID > reference_id
-      const directReferralId = 
-        referralReferenceId ?? 
-        extraDataReferralId ??
-        actionUrlReferralId ?? 
-        (hasReferralField ? referenceId : null);
-      
-      console.log('[NOTIF-ROUTE] Referral ID resolution', {
-        notificationId: notification?.id,
-        referralReferenceId,
-        extraDataReferralId,
-        actionUrlReferralId,
-        referenceId,
-        finalReferralId: directReferralId,
-        actionUrl: notification?.action_url,
-      });
-
+      const directReferralId = referralReferenceId ?? extraDataReferralId ?? actionUrlReferralId ?? (hasReferralField ? referenceId : null);
       if (directReferralId !== null) {
-        return { route: 'ReferralDetail', params: { referralId: directReferralId } };
+        return {
+          route: 'ReferralDetail',
+          params: {
+            referralId: directReferralId
+          }
+        };
       }
-
       if (isReReferredSignal) {
         return {
           route: 'ReReferredCases',
           params: {
             referenceId: referenceId || undefined,
             mobileNumber: referralMobileFilter,
-            initialSearchQuery: referralSearchHint || undefined,
-          },
+            initialSearchQuery: referralSearchHint || undefined
+          }
         };
       }
-
       if (isPendingReferralSignal) {
         return {
           route: 'PendingReferrals',
           params: {
             referenceId: referenceId || undefined,
             mobileNumber: referralMobileFilter,
-            initialSearchQuery: referralSearchHint || undefined,
-          },
+            initialSearchQuery: referralSearchHint || undefined
+          }
         };
       }
-
       return {
         route: 'DeliveryReferrals',
         params: {
           referenceId: referenceId || undefined,
           mobileNumber: referralMobileFilter,
-          initialSearchQuery: referralSearchHint || undefined,
-        },
+          initialSearchQuery: referralSearchHint || undefined
+        }
       };
     }
-
     if (isGrievanceSignal) {
       // Try to get grievance ID from multiple sources
-      const resolvedGrievanceId = 
-        grievanceId ?? 
-        (category === 'grievance' || type === 'grievance' ? referenceId : null);
-      
-      console.log('[NOTIF-ROUTE] Grievance routing', {
-        notificationId: notification?.id,
-        grievanceId,
-        referenceId,
-        resolvedGrievanceId,
-        category,
-        type,
-      });
-      
-      return resolvedGrievanceId
-        ? { route: 'GrievanceDetail', params: { grievanceId: resolvedGrievanceId } }
-        : { route: 'GrievanceHandling', params: {} };
+      const resolvedGrievanceId = grievanceId ?? (category === 'grievance' || type === 'grievance' ? referenceId : null);
+      return resolvedGrievanceId ? {
+        route: 'GrievanceDetail',
+        params: {
+          grievanceId: resolvedGrievanceId
+        }
+      } : {
+        route: 'GrievanceHandling',
+        params: {}
+      };
     }
 
     // Check high-risk BEFORE approval to avoid false matches
     if (isHighRiskSignal) {
       // Extract patient information for filtering
       const highRiskPatientId = patientId ?? referenceId;
-      
+
       // Extract patient name from extra_data or other fields
       const extraData = parseObjectIfJson(notification?.extra_data) || {};
-      const patientNameFromExtra = 
-        extraData?.pregnant_woman_name ||
-        extraData?.patient_name ||
-        extraData?.full_name ||
-        extraData?.name;
-      
+      const patientNameFromExtra = extraData?.pregnant_woman_name || extraData?.patient_name || extraData?.full_name || extraData?.name;
+
       // Extract patient name from message as fallback
       const patientNameFromMessage = extractPatientNameFromMessage(notification?.message);
-      
-      const highRiskMobile = normalizeMobile(
-        notification?.mobile_number ||
-        notification?.patient_mobile ||
-        notification?.beneficiary_mobile ||
-        payload?.mobile_number ||
-        payload?.patient_mobile ||
-        payload?.beneficiary_mobile ||
-        payload?.phone ||
-        payload?.contact_number ||
-        extraData?.mobile_number ||
-        extraData?.phone ||
-        findMobileInObject(payload) ||
-        findMobileInObject(extraData) ||
-        extractMobileFromText(notification?.title) ||
-        extractMobileFromText(notification?.message)
-      );
-      
-      const highRiskSearchHint = String(
-        highRiskMobile ||
-        patientNameFromExtra ||
-        patientNameFromMessage ||
-        notification?.full_name ||
-        notification?.patient_name ||
-        payload?.full_name ||
-        payload?.patient_name ||
-        ''
-      ).trim();
-      
-      console.log('[NOTIF-ROUTE] High-risk routing', {
-        notificationId: notification?.id,
-        highRiskPatientId,
-        highRiskMobile,
-        highRiskSearchHint,
-        patientNameFromExtra,
-        patientNameFromMessage,
-        extraData,
-        notification_type: notification?.notification_type,
-        category,
-      });
-      
-      return { 
-        route: 'HighRiskCases', 
+      const highRiskMobile = normalizeMobile(notification?.mobile_number || notification?.patient_mobile || notification?.beneficiary_mobile || payload?.mobile_number || payload?.patient_mobile || payload?.beneficiary_mobile || payload?.phone || payload?.contact_number || extraData?.mobile_number || extraData?.phone || findMobileInObject(payload) || findMobileInObject(extraData) || extractMobileFromText(notification?.title) || extractMobileFromText(notification?.message));
+      const highRiskSearchHint = String(highRiskMobile || patientNameFromExtra || patientNameFromMessage || notification?.full_name || notification?.patient_name || payload?.full_name || payload?.patient_name || '').trim();
+      return {
+        route: 'HighRiskCases',
         params: {
           patientId: highRiskPatientId || undefined,
           initialSearchQuery: highRiskSearchHint || undefined,
-          fromNotification: true,
+          fromNotification: true
         }
       };
     }
-
     if (isApprovalSignal && isPendingApprovalSignal) {
-      return approvalPatientId
-        ? { route: 'PendingApprovalDetail', params: { patientId: approvalPatientId } }
-        : { route: 'PendingApproval', params: {} };
+      return approvalPatientId ? {
+        route: 'PendingApprovalDetail',
+        params: {
+          patientId: approvalPatientId
+        }
+      } : {
+        route: 'PendingApproval',
+        params: {}
+      };
     }
-
     if (isApprovalSignal && isNotApprovedSignal) {
-      return approvalPatientId
-        ? { route: 'PendingApprovalDetail', params: { patientId: approvalPatientId } }
-        : { route: 'PendingApproval', params: {} };
+      return approvalPatientId ? {
+        route: 'PendingApprovalDetail',
+        params: {
+          patientId: approvalPatientId
+        }
+      } : {
+        route: 'PendingApproval',
+        params: {}
+      };
     }
-
     if (isApprovalSignal && isApprovedSignal) {
       const approvedPatientId = patientId ?? referenceId;
-      return approvedPatientId
-        ? { route: 'ANCTracking', params: { patientId: approvedPatientId } }
-        : { route: 'ANCTracking', params: {} };
+      return approvedPatientId ? {
+        route: 'ANCTracking',
+        params: {
+          patientId: approvedPatientId
+        }
+      } : {
+        route: 'ANCTracking',
+        params: {}
+      };
     }
 
     // If approval + ANC visit appears together, prefer ANC tracking as the next actionable module.
     if (isApprovalSignal && isANCSignal) {
       const ancPatientId = patientId ?? referenceId;
-      console.log('[NOTIF-ROUTE] ANC route -> PatientList', {
-        notificationId: notification?.id,
-        mode: 'anc',
-        initialSearchQuery: patientSearchHint || null,
-        patientIdForSearch: ancPatientId || null,
-      });
       return {
         route: 'PatientList',
         params: {
           mode: 'anc',
           initialSearchQuery: patientSearchHint || undefined,
-          patientIdForSearch: ancPatientId || undefined,
-        },
+          patientIdForSearch: ancPatientId || undefined
+        }
       };
     }
-
     if (isApprovalSignal) {
-      return approvalPatientId
-        ? { route: 'PendingApprovalDetail', params: { patientId: approvalPatientId } }
-        : { route: 'PendingApproval', params: {} };
+      return approvalPatientId ? {
+        route: 'PendingApprovalDetail',
+        params: {
+          patientId: approvalPatientId
+        }
+      } : {
+        route: 'PendingApproval',
+        params: {}
+      };
     }
-
     if (isANCSignal) {
       const ancPatientId = patientId ?? referenceId;
-      console.log('[NOTIF-ROUTE] ANC signal route -> PatientList', {
-        notificationId: notification?.id,
-        mode: 'anc',
-        initialSearchQuery: patientSearchHint || null,
-        patientIdForSearch: ancPatientId || null,
-      });
       return {
         route: 'PatientList',
         params: {
           mode: 'anc',
           initialSearchQuery: patientSearchHint || undefined,
-          patientIdForSearch: ancPatientId || undefined,
-        },
+          patientIdForSearch: ancPatientId || undefined
+        }
       };
     }
-
     if (isReportSignal) {
-      return { route: 'AllReports', params: {} };
+      return {
+        route: 'AllReports',
+        params: {}
+      };
     }
-
     if (isAppointmentSignal) {
       // When the backend gives a direct appointment action URL, honor it first.
       if (actionUrlAppointmentId !== null) {
-        console.log('[NOTIF-ROUTE] Appointment action_url -> AppointmentDetail', {
-          notificationId: notification?.id,
-          userRole,
-          actionUrl: notification?.action_url,
-          appointmentId: actionUrlAppointmentId,
-        });
         return {
           route: 'AppointmentDetail',
-          params: { appointmentId: actionUrlAppointmentId },
+          params: {
+            appointmentId: actionUrlAppointmentId
+          }
         };
       }
 
@@ -944,118 +544,63 @@ const NotificationsScreen = ({ navigation }) => {
       if (userRole === 'usg_centre') {
         // Use the appointmentId extracted from action_url or other sources
         const usgAppointmentId = appointmentId;
-        
+
         // Extract patient name from extra_data for search
         const extraData = parseObjectIfJson(notification?.extra_data) || {};
-        const patientNameFromExtra = 
-          extraData?.pregnant_woman_name ||
-          extraData?.patient_name ||
-          extraData?.full_name ||
-          extraData?.name;
-        
+        const patientNameFromExtra = extraData?.pregnant_woman_name || extraData?.patient_name || extraData?.full_name || extraData?.name;
+
         // Build search query from patient name or mobile
-        const usgSearchQuery = String(
-          patientNameFromExtra ||
-          notificationSearchHint ||
-          ''
-        ).trim();
-        
-        console.log('[NOTIF-ROUTE] USG appointment routing', {
-          notificationId: notification?.id,
-          userRole,
-          usgAppointmentId,
-          usgSearchQuery,
-          patientNameFromExtra,
-          actionUrl: notification?.action_url,
-          actionUrlAppointmentId,
-          directAppointmentId,
-          reference_id: notification?.reference_id,
-          reference_type: notification?.reference_type,
-          notification_type: notification?.notification_type,
-        });
-        
+        const usgSearchQuery = String(patientNameFromExtra || notificationSearchHint || '').trim();
+
         // Route to USG Dashboard with booking filter
-        console.log('[NOTIF-ROUTE] USG appointment -> USGDashboard (booking requests)', {
-          notificationId: notification?.id,
-          bookingAppointmentId: usgAppointmentId,
-          bookingSearchQuery: usgSearchQuery,
-        });
-        
-        return { 
-          route: 'USGDashboard', 
-          params: { 
+
+        return {
+          route: 'USGDashboard',
+          params: {
             bookingAppointmentId: usgAppointmentId || undefined,
             bookingSearchQuery: usgSearchQuery || undefined,
-            fromNotification: true,
-          } 
+            fromNotification: true
+          }
         };
       }
-      
+
       // For non-USG centre users (sub_centre, block, district)
       // Extract patient information from extra_data or notification fields
       const extraData = parseObjectIfJson(notification?.extra_data) || {};
-      const patientNameFromExtra = 
-        extraData?.pregnant_woman_name ||
-        extraData?.patient_name ||
-        extraData?.full_name ||
-        extraData?.name;
-      
+      const patientNameFromExtra = extraData?.pregnant_woman_name || extraData?.patient_name || extraData?.full_name || extraData?.name;
+
       // Try to get patient ID (only if reference_type is pregnant_woman)
-      const appointmentPatientId = 
-        notification?.reference_type === 'pregnant_woman' ? referenceId : 
-        (notification?.pregnant_woman_id ?? notification?.patient_id);
-      
+      const appointmentPatientId = notification?.reference_type === 'pregnant_woman' ? referenceId : notification?.pregnant_woman_id ?? notification?.patient_id;
+
       // Build search hint from available data
-      const appointmentSearchHint = String(
-        patientSearchHint ||
-        patientNameFromExtra ||
-        notification?.full_name ||
-        notification?.patient_name ||
-        payload?.full_name ||
-        payload?.patient_name ||
-        ''
-      ).trim();
-      
+      const appointmentSearchHint = String(patientSearchHint || patientNameFromExtra || notification?.full_name || notification?.patient_name || payload?.full_name || payload?.patient_name || '').trim();
       if (appointmentPatientId) {
-        console.log('[NOTIF-ROUTE] Appointment for non-USG user -> ANCTracking', {
-          notificationId: notification?.id,
-          userRole,
-          appointmentPatientId,
-          reference_type: notification?.reference_type,
-        });
-        return { 
-          route: 'ANCTracking', 
-          params: { 
-            patientId: appointmentPatientId 
-          } 
+        return {
+          route: 'ANCTracking',
+          params: {
+            patientId: appointmentPatientId
+          }
         };
       }
-      
+
       // If no patient ID but have search hint, go to patient list
       if (appointmentSearchHint) {
-        console.log('[NOTIF-ROUTE] Appointment for non-USG user -> PatientList', {
-          notificationId: notification?.id,
-          userRole,
-          appointmentSearchHint,
-          patientNameFromExtra,
-        });
         return {
           route: 'PatientList',
           params: {
             mode: 'anc',
-            initialSearchQuery: appointmentSearchHint,
-          },
+            initialSearchQuery: appointmentSearchHint
+          }
         };
       }
-      
-      // Fallback to ANC Tracking without patient ID
-      console.log('[NOTIF-ROUTE] Appointment for non-USG user -> ANCTracking (no patient)', {
-        notificationId: notification?.id,
-        userRole,
-      });
-      return { route: 'ANCTracking', params: {} };
-    }
 
+      // Fallback to ANC Tracking without patient ID
+
+      return {
+        route: 'ANCTracking',
+        params: {}
+      };
+    }
     if (explicitRoute && allowedRoutes.has(explicitRoute)) {
       const params = {};
       if (explicitRoute === 'AppointmentDetail') {
@@ -1068,287 +613,279 @@ const NotificationsScreen = ({ navigation }) => {
         const ancExplicitId = patientId ?? referenceId;
         if (ancExplicitId) params.patientId = ancExplicitId;
       }
-      return { route: explicitRoute, params };
+      return {
+        route: explicitRoute,
+        params
+      };
     }
-
     return null;
   };
-
-  const handleNotificationPress = async (notification) => {
+  const handleNotificationPress = async notification => {
     try {
       if (!notification?.is_read) {
         await markAsRead(notification.id);
       }
-
       const userInfo = await secureStorage.getItem('user_info');
       const target = resolveNotificationNavigation(notification, userInfo?.role);
-      console.log('[NOTIF-PRESS] resolved initial target', {
-        notificationId: notification?.id,
-        route: target?.route,
-        params: target?.params,
-      });
       if (target?.route === 'PendingApprovalDetail') {
-        const resolution = await resolvePendingApprovalPatientId(
-          notification,
-          target?.params?.patientId
-        );
+        const resolution = await resolvePendingApprovalPatientId(notification, target?.params?.patientId);
         if (resolution?.matched && resolution?.patientId) {
-          target.params = { ...(target.params || {}), patientId: resolution.patientId };
+          target.params = {
+            ...(target.params || {}),
+            patientId: resolution.patientId
+          };
         } else {
           target.route = 'PendingApproval';
           target.params = {};
         }
-        console.log('[NOTIF-PRESS] final pending approval navigation target', {
-          notificationId: notification?.id,
-          route: target?.route,
-          params: target?.params,
-        });
       }
-      if (
-        target?.route === 'ReferralDetail' ||
-        target?.route === 'DeliveryReferrals' ||
-        target?.route === 'PendingReferrals' ||
-        target?.route === 'ReReferredCases'
-      ) {
-        const resolution = await resolveReferralIdFromNotification(
-          notification,
-          target?.params?.referralId ??
-            notification?.delivery_referral_id ??
-            notification?.referral_id ??
-            notification?.reference_id
-        );
+      if (target?.route === 'ReferralDetail' || target?.route === 'DeliveryReferrals' || target?.route === 'PendingReferrals' || target?.route === 'ReReferredCases') {
+        const resolution = await resolveReferralIdFromNotification(notification, target?.params?.referralId ?? notification?.delivery_referral_id ?? notification?.referral_id ?? notification?.reference_id);
         if (resolution?.matched && resolution?.referralId) {
           target.route = 'ReferralDetail';
-          target.params = { referralId: resolution.referralId };
+          target.params = {
+            referralId: resolution.referralId
+          };
         } else {
-          const payload =
-            parseObjectIfJson(notification?.payload) ||
-            parseObjectIfJson(notification?.metadata) ||
-            parseObjectIfJson(notification?.data) ||
-            null;
-          const fallbackSearchHint = String(
-            notification?.patient_name ||
-            notification?.full_name ||
-            payload?.patient_name ||
-            payload?.full_name ||
-            ''
-          ).trim();
-          const fallbackReferenceId = String(
-            notification?.delivery_referral_id ??
-            notification?.referral_id ??
-            notification?.reference_id ??
-            ''
-          ).trim();
-
+          const payload = parseObjectIfJson(notification?.payload) || parseObjectIfJson(notification?.metadata) || parseObjectIfJson(notification?.data) || null;
+          const fallbackSearchHint = String(notification?.patient_name || notification?.full_name || payload?.patient_name || payload?.full_name || '').trim();
+          const fallbackReferenceId = String(notification?.delivery_referral_id ?? notification?.referral_id ?? notification?.reference_id ?? '').trim();
           target.route = 'DeliveryReferrals';
           target.params = {
-            ...(fallbackSearchHint ? { initialSearchQuery: fallbackSearchHint } : {}),
-            ...(fallbackReferenceId ? { referenceId: fallbackReferenceId } : {}),
+            ...(fallbackSearchHint ? {
+              initialSearchQuery: fallbackSearchHint
+            } : {}),
+            ...(fallbackReferenceId ? {
+              referenceId: fallbackReferenceId
+            } : {})
           };
         }
-        console.log('[NOTIF-PRESS] final referral navigation target', {
-          notificationId: notification?.id,
-          route: target?.route,
-          params: target?.params,
-        });
       }
-      if (
-        target?.route === 'PatientList' &&
-        target?.params?.mode === 'anc' &&
-        !target?.params?.initialSearchQuery &&
-        target?.params?.patientIdForSearch
-      ) {
+      if (target?.route === 'PatientList' && target?.params?.mode === 'anc' && !target?.params?.initialSearchQuery && target?.params?.patientIdForSearch) {
         try {
           let fallbackMobile = '';
           const lookupPatientId = target.params.patientIdForSearch;
           try {
             const patientData = await pregnantWomenAPI.getById(lookupPatientId);
             fallbackMobile = normalizeMobile(patientData?.mobile_number) || '';
-          } catch (apiLookupError) {
-            console.log('[NOTIF-ROUTE] online patient lookup failed, trying offline cache', {
-              notificationId: notification?.id,
-              patientIdForSearch: lookupPatientId,
-              error: String(apiLookupError?.message || apiLookupError),
-            });
-          }
-
+          } catch (apiLookupError) {}
           if (!fallbackMobile) {
             const offlinePatient = await syncService.getPatientById(lookupPatientId);
             fallbackMobile = normalizeMobile(offlinePatient?.mobile_number) || '';
           }
-
           if (!fallbackMobile) {
             const cachedPatients = await syncService.getPatients();
-            const patientItems = Array.isArray(cachedPatients) ? cachedPatients : (cachedPatients?.items || []);
-            const matchedPatient = patientItems.find((p) => Number(p?.id) === Number(lookupPatientId));
+            const patientItems = Array.isArray(cachedPatients) ? cachedPatients : cachedPatients?.items || [];
+            const matchedPatient = patientItems.find(p => Number(p?.id) === Number(lookupPatientId));
             fallbackMobile = normalizeMobile(matchedPatient?.mobile_number) || '';
           }
-
           if (fallbackMobile) {
             target.params.initialSearchQuery = fallbackMobile;
-            console.log('[NOTIF-ROUTE] fetched mobile fallback by patient id', {
-              notificationId: notification?.id,
-              patientIdForSearch: lookupPatientId,
-              fallbackMobile,
-            });
-          } else {
-            console.log('[NOTIF-ROUTE] no mobile found in online/offline lookup', {
-              notificationId: notification?.id,
-              patientIdForSearch: lookupPatientId,
-            });
-          }
-        } catch (fallbackError) {
-          console.log('[NOTIF-ROUTE] mobile fallback fetch failed', {
-            notificationId: notification?.id,
-            patientIdForSearch: target?.params?.patientIdForSearch,
-            error: String(fallbackError?.message || fallbackError),
-          });
-        }
+          } else {}
+        } catch (fallbackError) {}
       }
       if (target?.route) {
         navigation.navigate(target.route, target.params || {});
         return;
       }
-
       const fallbackRoute = await getDashboardRouteByRole();
       navigation.navigate(fallbackRoute);
-    } catch (error) {
-      console.error('Error handling notification click:', error);
-    }
+    } catch (error) {}
   };
-
-  const getPriorityColor = (priority) => {
+  const getPriorityColor = priority => {
     switch (priority) {
-      case 'urgent': return '#dc2626';
-      case 'high': return '#f59e0b';
-      case 'normal': return '#3b82f6';
-      default: return '#6b7280';
+      case 'urgent':
+        return '#dc2626';
+      case 'high':
+        return '#f59e0b';
+      case 'normal':
+        return '#3b82f6';
+      default:
+        return '#6b7280';
     }
   };
-
-  const formatTime = (dateString) => {
+  const formatTime = dateString => {
     const date = new Date(dateString);
     const now = new Date();
     const diff = now - date;
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
-
-    if (minutes < 60) return t('minutesAgo', { count: minutes });
-    if (hours < 24) return t('hoursAgo', { count: hours });
-    return t('daysAgo', { count: days });
+    if (minutes < 60) return t('minutesAgo', {
+      count: minutes
+    });
+    if (hours < 24) return t('hoursAgo', {
+      count: hours
+    });
+    return t('daysAgo', {
+      count: days
+    });
   };
-
-  const getScopeText = (notification) => {
+  const getScopeText = notification => {
     const parts = [];
-
     if (notification.target_role || notification.role) {
       parts.push(`${t('role')}: ${notification.target_role || notification.role}`);
     }
-
     if (notification.block_name || notification.block_id) {
       parts.push(`${t('block')}: ${notification.block_name || notification.block_id}`);
     }
-
     if (notification.sub_centre_name || notification.sub_centre_id) {
       parts.push(`${t('subCentre')}: ${notification.sub_centre_name || notification.sub_centre_id}`);
     }
-
     if (notification.usg_centre_name || notification.usg_centre_id) {
       parts.push(`${t('usgCentre')}: ${notification.usg_centre_name || notification.usg_centre_id}`);
     }
-
     return parts.join(' • ');
   };
-
-  return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right', 'bottom']}>
+  return <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right', 'bottom']}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <ArrowLeft size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t('notifications')}</Text>
-        {unreadCount > 0 && (
-          <TouchableOpacity onPress={handleMarkAllAsRead} style={styles.markAllButton}>
+        {unreadCount > 0 && <TouchableOpacity onPress={handleMarkAllAsRead} style={styles.markAllButton}>
             <Check size={20} color="white" />
-          </TouchableOpacity>
-        )}
+          </TouchableOpacity>}
       </View>
 
       <View style={styles.filterContainer}>
-        <TouchableOpacity
-          style={[styles.filterButton, filter === 'all' && styles.filterButtonActive]}
-          onPress={() => setFilter('all')}
-        >
+        <TouchableOpacity style={[styles.filterButton, filter === 'all' && styles.filterButtonActive]} onPress={() => setFilter('all')}>
           <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>{t('all')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filterButton, filter === 'unread' && styles.filterButtonActive]}
-          onPress={() => setFilter('unread')}
-        >
+        <TouchableOpacity style={[styles.filterButton, filter === 'unread' && styles.filterButtonActive]} onPress={() => setFilter('unread')}>
           <Text style={[styles.filterText, filter === 'unread' && styles.filterTextActive]}>
             {t('unread')} ({unreadCount})
           </Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView
-        style={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
-        {notifications.length === 0 ? (
-          <View style={styles.emptyState}>
+      <ScrollView style={styles.content} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        {notifications.length === 0 ? <View style={styles.emptyState}>
             <Bell size={48} color="#9ca3af" />
             <Text style={styles.emptyText}>{t('noNotifications')}</Text>
-          </View>
-        ) : (
-          notifications.map((notification) => (
-            <TouchableOpacity
-              key={notification.id}
-              style={[styles.notificationCard, !notification.is_read && styles.unreadCard]}
-              onPress={() => handleNotificationPress(notification)}
-            >
-              <View style={[styles.priorityIndicator, { backgroundColor: getPriorityColor(notification.priority) }]} />
+          </View> : notifications.map(notification => <TouchableOpacity key={notification.id} style={[styles.notificationCard, !notification.is_read && styles.unreadCard]} onPress={() => handleNotificationPress(notification)}>
+              <View style={[styles.priorityIndicator, {
+          backgroundColor: getPriorityColor(notification.priority)
+        }]} />
               <View style={styles.notificationContent}>
                 <Text style={styles.notificationTitle}>{notification.title}</Text>
                 <Text style={styles.notificationMessage}>{notification.message}</Text>
-                {!!getScopeText(notification) && (
-                  <Text style={styles.notificationScope}>{getScopeText(notification)}</Text>
-                )}
+                {!!getScopeText(notification) && <Text style={styles.notificationScope}>{getScopeText(notification)}</Text>}
                 <Text style={styles.notificationTime}>{formatTime(notification.created_at)}</Text>
               </View>
               {!notification.is_read && <View style={styles.unreadDot} />}
-            </TouchableOpacity>
-          ))
-        )}
+            </TouchableOpacity>)}
       </ScrollView>
-    </SafeAreaView>
-  );
+    </SafeAreaView>;
 };
-
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#f9fafb' },
-  header: { backgroundColor: '#D2691E', padding: 16, flexDirection: 'row', alignItems: 'center' },
-  backButton: { marginRight: 12 },
-  headerTitle: { flex: 1, fontSize: 20, fontWeight: 'bold', color: 'white' },
-  markAllButton: { padding: 8 },
-  filterContainer: { flexDirection: 'row', padding: 12, gap: 8, backgroundColor: 'white' },
-  filterButton: { flex: 1, padding: 12, borderRadius: 8, backgroundColor: '#f3f4f6', alignItems: 'center' },
-  filterButtonActive: { backgroundColor: '#8B4513' },
-  filterText: { fontSize: 14, fontWeight: '600', color: '#6b7280' },
-  filterTextActive: { color: 'white' },
-  content: { flex: 1, padding: 12 },
-  notificationCard: { backgroundColor: 'white', borderRadius: 8, padding: 12, marginBottom: 8, flexDirection: 'row', borderWidth: 1, borderColor: '#e5e7eb' },
-  unreadCard: { backgroundColor: '#eff6ff' },
-  priorityIndicator: { width: 4, borderRadius: 2, marginRight: 12 },
-  notificationContent: { flex: 1 },
-  notificationTitle: { fontSize: 14, fontWeight: '600', color: '#1f2937', marginBottom: 4 },
-  notificationMessage: { fontSize: 13, color: '#6b7280', marginBottom: 4 },
-  notificationScope: { fontSize: 11, color: '#8B4513', marginBottom: 4, fontWeight: '500' },
-  notificationTime: { fontSize: 11, color: '#9ca3af' },
-  unreadDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#3b82f6', marginLeft: 8 },
-  emptyState: { alignItems: 'center', justifyContent: 'center', paddingVertical: 60 },
-  emptyText: { fontSize: 16, color: '#9ca3af', marginTop: 12 },
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f9fafb'
+  },
+  header: {
+    backgroundColor: '#D2691E',
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  backButton: {
+    marginRight: 12
+  },
+  headerTitle: {
+    flex: 1,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white'
+  },
+  markAllButton: {
+    padding: 8
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    padding: 12,
+    gap: 8,
+    backgroundColor: 'white'
+  },
+  filterButton: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#f3f4f6',
+    alignItems: 'center'
+  },
+  filterButtonActive: {
+    backgroundColor: '#8B4513'
+  },
+  filterText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6b7280'
+  },
+  filterTextActive: {
+    color: 'white'
+  },
+  content: {
+    flex: 1,
+    padding: 12
+  },
+  notificationCard: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: '#e5e7eb'
+  },
+  unreadCard: {
+    backgroundColor: '#eff6ff'
+  },
+  priorityIndicator: {
+    width: 4,
+    borderRadius: 2,
+    marginRight: 12
+  },
+  notificationContent: {
+    flex: 1
+  },
+  notificationTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1f2937',
+    marginBottom: 4
+  },
+  notificationMessage: {
+    fontSize: 13,
+    color: '#6b7280',
+    marginBottom: 4
+  },
+  notificationScope: {
+    fontSize: 11,
+    color: '#8B4513',
+    marginBottom: 4,
+    fontWeight: '500'
+  },
+  notificationTime: {
+    fontSize: 11,
+    color: '#9ca3af'
+  },
+  unreadDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#3b82f6',
+    marginLeft: 8
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#9ca3af',
+    marginTop: 12
+  }
 });
-
 export default NotificationsScreen;

@@ -82,13 +82,22 @@ const KeyboardSafeModal = ({
       onRequestClose={onRequestClose}
     >
       <TouchableWithoutFeedback onPress={handleBackdropPress}>
-        <View style={[styles.overlay, overlayStyle]}>
-          <View style={styles.centerContainer}>
+        <KeyboardAvoidingView
+          style={[styles.overlay, overlayStyle]}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <View
+            style={[
+              styles.centerContainer,
+              visibleKeyboard && styles.centerContainerKeyboardVisible,
+              visibleKeyboard ? { paddingBottom: keyboardGap } : null,
+            ]}
+          >
             <TouchableWithoutFeedback>
               <View style={[styles.centerContent, contentStyle]}>{children}</View>
             </TouchableWithoutFeedback>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
     </Modal>
   );
@@ -119,6 +128,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
+  },
+  centerContainerKeyboardVisible: {
+    justifyContent: 'flex-start',
+    paddingTop: 54,
   },
   centerContent: {
     backgroundColor: '#fff',

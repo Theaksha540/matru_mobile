@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Alert,
-  Platform,
-  KeyboardAvoidingView,
-  Modal,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, Platform, KeyboardAvoidingView, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -23,14 +12,16 @@ import LanguageToggle from '../../components/LanguageToggle';
 import KeyboardSafeModal from '../../components/KeyboardSafeModal';
 import { formatDateDDMMYYYY } from '../../utils/dateFormat';
 import '../../i18n';
-
-const SelfRegisterScreen = ({ navigation }) => {
-  const { t } = useTranslation();
+const SelfRegisterScreen = ({
+  navigation
+}) => {
+  const {
+    t
+  } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     husbandName: '',
     mobileNumber: '',
-    aadharNumber: '',
     age: '',
     date_of_birth: '',
     blockId: '',
@@ -54,39 +45,33 @@ const SelfRegisterScreen = ({ navigation }) => {
   const [mobileDuplicateExists, setMobileDuplicateExists] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const duplicateMobileAlertRef = React.useRef('');
-  const aadhaarRef1 = React.useRef(null);
-  const aadhaarRef2 = React.useRef(null);
-  const aadhaarRef3 = React.useRef(null);
-
   useEffect(() => {
     loadDistricts();
     loadBlocks();
     // Don't start sync service for guest users
   }, []);
-
   useEffect(() => {
     if (formData.blockId) {
       loadWards(formData.blockId);
     } else {
       setWards([]);
-      setFormData(prev => ({ ...prev, wardId: '' }));
+      setFormData(prev => ({
+        ...prev,
+        wardId: ''
+      }));
     }
   }, [formData.blockId]);
 
   // Duplicate mobile number check
   useEffect(() => {
     let isCancelled = false;
-
     const checkDuplicateMobile = async () => {
-      console.log('Checking mobile duplicate for:', formData.mobileNumber);
-      
       if (formData.mobileNumber.length === 0) {
         setMobileDuplicateExists(false);
         setIsCheckingMobileDuplicate(false);
         duplicateMobileAlertRef.current = '';
         return;
       }
-
       if (formData.mobileNumber.length !== 10) {
         setMobileDuplicateExists(false);
         setIsCheckingMobileDuplicate(false);
@@ -97,24 +82,17 @@ const SelfRegisterScreen = ({ navigation }) => {
       // Skip validation check if there's already a format error
       const formatError = validateMobileNumber(formData.mobileNumber);
       if (formatError) {
-        console.log('Format error, skipping duplicate check:', formatError);
         setMobileDuplicateExists(false);
         setIsCheckingMobileDuplicate(false);
         return;
       }
-
-      console.log('Starting duplicate check API call...');
       setIsCheckingMobileDuplicate(true);
-
       try {
         const result = await pregnantWomenAPI.searchByMobile(formData.mobileNumber);
-        console.log('Duplicate check result:', result);
-        
         if (!isCancelled) {
           // If API returns data, it means duplicate exists
           const hasDuplicate = result && (result.id || result.mobile_number);
           setMobileDuplicateExists(hasDuplicate);
-
           if (hasDuplicate && duplicateMobileAlertRef.current !== formData.mobileNumber) {
             duplicateMobileAlertRef.current = formData.mobileNumber;
             Alert.alert(t('error'), t('duplicateMobileNumber'));
@@ -123,19 +101,15 @@ const SelfRegisterScreen = ({ navigation }) => {
           }
         }
       } catch (error) {
-        console.log('Mobile duplicate check error:', error);
-        console.log('Error status:', error?.response?.status);
-        console.log('Error data:', error?.response?.data);
-        
         if (!isCancelled) {
           if (error?.response?.status === 404) {
             // 404 means mobile number not found - no duplicate
-            console.log('No duplicate found (404)');
+
             setMobileDuplicateExists(false);
             duplicateMobileAlertRef.current = '';
           } else {
             // Network or other errors - don't block submission but log it
-            console.error('Error checking mobile duplicate:', error.message);
+
             setMobileDuplicateExists(false);
             duplicateMobileAlertRef.current = '';
           }
@@ -146,109 +120,93 @@ const SelfRegisterScreen = ({ navigation }) => {
         }
       }
     };
-
     const timeoutId = setTimeout(checkDuplicateMobile, 400);
-
     return () => {
       isCancelled = true;
       clearTimeout(timeoutId);
     };
   }, [formData.mobileNumber]);
-
   const loadDistricts = async () => {
     try {
       const data = await adminAPI.getDistricts();
       setDistricts(data);
-    } catch (error) {
-      console.error('Error loading districts:', error);
-    }
+    } catch (error) {}
   };
-
   const loadBlocks = async () => {
     try {
       // Direct API call without sync service for guest users
       const data = await adminAPI.getBlocks();
-      console.log('Loaded blocks:', data);
       setBlocks(data);
     } catch (error) {
-      console.error('Error loading blocks:', error);
       Alert.alert('Error', 'Failed to load blocks. Please check your connection.');
     }
   };
-
-  const loadWards = async (blockId) => {
+  const loadWards = async blockId => {
     try {
       // Direct API call without sync service for guest users
-      const data = await adminAPI.getWards({ block_id: blockId });
+      const data = await adminAPI.getWards({
+        block_id: blockId
+      });
       setWards(data);
-    } catch (error) {
-      console.error('Error loading wards:', error);
-    }
+    } catch (error) {}
   };
-
   const handleDateChange = (event, date) => {
     setShowDatePicker(false);
     if (date) {
       setSelectedDate(date);
       const formattedDate = formatDateDDMMYYYY(date); // DD-MM-YYYY format
       const isoDate = date.toISOString().split('T')[0]; // Keep ISO for API
-      
+
       // Calculate age from date of birth
       const today = new Date();
       let age = today.getFullYear() - date.getFullYear();
       const monthDiff = today.getMonth() - date.getMonth();
-      
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate())) {
+      if (monthDiff < 0 || monthDiff === 0 && today.getDate() < date.getDate()) {
         age--;
       }
-      
       setFormData({
-        ...formData, 
+        ...formData,
         date_of_birth: isoDate,
         date_of_birth_display: formattedDate,
         age: age.toString()
       });
-
       if (age < 18 || age > 49) {
         Alert.alert(t('error'), t('ageMustBe18To49'));
       }
     }
   };
-
   const isAgeValid = (() => {
     const ageNumber = parseInt(formData.age, 10);
     return !Number.isNaN(ageNumber) && ageNumber >= 18 && ageNumber <= 49;
   })();
-
   const showDatepicker = () => {
     setShowDatePicker(true);
   };
-
-  const validateMobileNumber = (mobile) => {
+  const validateMobileNumber = mobile => {
     // Remove any non-digit characters
     const cleaned = mobile.replace(/\D/g, '');
-    
+
     // Check if empty
     if (!cleaned) {
       return 'Mobile number is required';
     }
-    
+
     // Check length
     if (cleaned.length !== 10) {
       return 'Mobile number must be exactly 10 digits';
     }
-    
+
     // Check if it starts with valid digits (6-9)
     if (!/^[6-9]/.test(cleaned)) {
       return 'Mobile number must start with 6, 7, 8, or 9';
     }
-    
+
     // Check for invalid patterns
     // All same digits (e.g., 9999999999)
     if (/^(\d)\1{9}$/.test(cleaned)) {
       return 'Invalid mobile number pattern';
     }
-    
+
     // Sequential digits (e.g., 1234567890)
     const isSequential = cleaned.split('').every((digit, index) => {
       if (index === 0) return true;
@@ -257,19 +215,19 @@ const SelfRegisterScreen = ({ navigation }) => {
     if (isSequential) {
       return 'Invalid mobile number pattern';
     }
-    
     return ''; // Valid
   };
-
-  const handleMobileNumberChange = (text) => {
+  const handleMobileNumberChange = text => {
     // Only allow digits
     const cleaned = text.replace(/\D/g, '');
-    
+
     // Limit to 10 digits
     const limited = cleaned.slice(0, 10);
-    
-    setFormData({...formData, mobileNumber: limited});
-    
+    setFormData({
+      ...formData,
+      mobileNumber: limited
+    });
+
     // Validate and show error
     if (limited.length > 0) {
       const error = validateMobileNumber(limited);
@@ -278,98 +236,58 @@ const SelfRegisterScreen = ({ navigation }) => {
       setMobileError('');
     }
   };
-
-  const getRegistrationErrorMessage = (error) => {
+  const getRegistrationErrorMessage = error => {
     const responseData = error?.response?.data;
-    const duplicateMobilePatterns = [
-      responseData?.detail,
-      responseData?.message,
-      error?.message,
-    ]
-      .filter((value) => typeof value === 'string')
-      .map((value) => value.toLowerCase());
-
-    const hasDuplicateMobileError = duplicateMobilePatterns.some((value) =>
-      value.includes('mobile') && (
-        value.includes('already') ||
-        value.includes('duplicate') ||
-        value.includes('exists') ||
-        value.includes('registered')
-      )
-    );
-
+    const duplicateMobilePatterns = [responseData?.detail, responseData?.message, error?.message].filter(value => typeof value === 'string').map(value => value.toLowerCase());
+    const hasDuplicateMobileError = duplicateMobilePatterns.some(value => value.includes('mobile') && (value.includes('already') || value.includes('duplicate') || value.includes('exists') || value.includes('registered')));
     if (hasDuplicateMobileError) {
       return t('duplicateMobileNumber');
     }
-
     if (typeof responseData === 'string' && responseData.trim()) {
       return responseData;
     }
-
     if (typeof responseData?.detail === 'string' && responseData.detail.trim()) {
       return responseData.detail;
     }
-
     if (Array.isArray(responseData?.detail) && responseData.detail.length > 0) {
-      return responseData.detail
-        .map((item) => {
-          if (typeof item === 'string') return item;
-          if (typeof item?.msg === 'string' && item.msg.trim()) return item.msg;
-          return null;
-        })
-        .filter(Boolean)
-        .join('\n');
+      return responseData.detail.map(item => {
+        if (typeof item === 'string') return item;
+        if (typeof item?.msg === 'string' && item.msg.trim()) return item.msg;
+        return null;
+      }).filter(Boolean).join('\n');
     }
-
     if (Array.isArray(responseData?.errors) && responseData.errors.length > 0) {
-      return responseData.errors
-        .map((item) => {
-          if (typeof item === 'string') return item;
-          if (typeof item?.msg === 'string' && item.msg.trim()) return item.msg;
-          return null;
-        })
-        .filter(Boolean)
-        .join('\n');
+      return responseData.errors.map(item => {
+        if (typeof item === 'string') return item;
+        if (typeof item?.msg === 'string' && item.msg.trim()) return item.msg;
+        return null;
+      }).filter(Boolean).join('\n');
     }
-
     if (responseData && typeof responseData === 'object') {
-      const fieldErrors = Object.entries(responseData)
-        .map(([field, value]) => {
-          if (
-            field.toLowerCase().includes('mobile') &&
-            ((Array.isArray(value) && value.some((item) => String(item).toLowerCase().includes('duplicate') || String(item).toLowerCase().includes('already') || String(item).toLowerCase().includes('exists') || String(item).toLowerCase().includes('registered'))) ||
-             (typeof value === 'string' && ['duplicate', 'already', 'exists', 'registered'].some((pattern) => value.toLowerCase().includes(pattern))))
-          ) {
-            return t('duplicateMobileNumber');
-          }
-
-          if (Array.isArray(value)) {
-            const joinedValue = value.filter(Boolean).join(', ');
-            return joinedValue ? `${field}: ${joinedValue}` : null;
-          }
-
-          if (typeof value === 'string' && value.trim()) {
-            return `${field}: ${value}`;
-          }
-
-          return null;
-        })
-        .filter(Boolean);
-
+      const fieldErrors = Object.entries(responseData).map(([field, value]) => {
+        if (field.toLowerCase().includes('mobile') && (Array.isArray(value) && value.some(item => String(item).toLowerCase().includes('duplicate') || String(item).toLowerCase().includes('already') || String(item).toLowerCase().includes('exists') || String(item).toLowerCase().includes('registered')) || typeof value === 'string' && ['duplicate', 'already', 'exists', 'registered'].some(pattern => value.toLowerCase().includes(pattern)))) {
+          return t('duplicateMobileNumber');
+        }
+        if (Array.isArray(value)) {
+          const joinedValue = value.filter(Boolean).join(', ');
+          return joinedValue ? `${field}: ${joinedValue}` : null;
+        }
+        if (typeof value === 'string' && value.trim()) {
+          return `${field}: ${value}`;
+        }
+        return null;
+      }).filter(Boolean);
       if (fieldErrors.length > 0) {
         return fieldErrors.join('\n');
       }
     }
-
     if (typeof error?.message === 'string' && error.message.trim()) {
       return error.message;
     }
-
     return t('failedToSubmitRegistration');
   };
-
   const handleSubmit = async () => {
-    if (!formData.name || !formData.mobileNumber || !formData.blockId || !formData.husbandName || !formData.aadharNumber || !formData.age || !formData.fullAddress || !formData.date_of_birth) {
+    if (!formData.name || !formData.mobileNumber || !formData.blockId || !formData.husbandName  || !formData.age || !formData.fullAddress || !formData.date_of_birth) {
       Alert.alert(t('error'), t('pleaseEnterMandatoryFields'));
       return;
     }
@@ -392,36 +310,26 @@ const SelfRegisterScreen = ({ navigation }) => {
       Alert.alert(t('error'), t('duplicateMobileNumber'));
       return;
     }
-
-    if (formData.aadharNumber.length !== 12) {
-      Alert.alert('Error', 'Aadhaar number must be 12 digits');
-      return;
-    }
-
     const ageNumber = parseInt(formData.age, 10);
     if (Number.isNaN(ageNumber) || ageNumber < 18 || ageNumber > 49) {
       Alert.alert(t('error'), t('ageMustBe18To49'));
       return;
     }
-
     setIsSubmitting(true);
     try {
       const submitData = {
         full_name: formData.name,
         husband_name: formData.husbandName,
         mobile_number: formData.mobileNumber,
-        aadhaar_number: formData.aadharNumber,
         age: parseInt(formData.age) || 0,
         date_of_birth: formData.date_of_birth || null,
         block_id: parseInt(formData.blockId),
         district_id: districts.find(d => blocks.find(b => b.id === parseInt(formData.blockId))?.district_id === d.id)?.id || 1,
         full_address: formData.fullAddress
       };
-      
       if (formData.wardId) {
         submitData.ward_id = parseInt(formData.wardId);
       }
-      
       await pregnantWomenAPI.selfRegister(submitData);
       setShowSuccessModal(true);
     } catch (error) {
@@ -431,74 +339,38 @@ const SelfRegisterScreen = ({ navigation }) => {
       setIsSubmitting(false);
     }
   };
-
-  return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
+  return <SafeAreaView style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
       <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <ArrowLeft size={24} color="#111827" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t('selfRegister')}</Text>
         <LanguageToggle style={styles.languageToggle} />
       </View>
 
-      <KeyboardAvoidingView 
-        style={styles.keyboardAvoidingView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-      >
-        <ScrollView 
-          style={styles.content}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-        >
+      <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+        <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           <View style={styles.form}>
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>{t('fullName')} *</Text>
-              <TextInput
-                style={styles.input}
-                placeholder={t('enterFullName')}
-                value={formData.name}
-                onChangeText={(text) => setFormData({...formData, name: text})}
-              />
+              <TextInput style={styles.input} placeholder={t('enterFullName')} value={formData.name} onChangeText={text => setFormData({
+              ...formData,
+              name: text
+            })} />
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>{t('mobileNumber')} *</Text>
-              <TextInput
-                style={[
-                  styles.input,
-                  (mobileError && formData.mobileNumber.length > 0) || mobileDuplicateExists ? styles.inputError : null
-                ]}
-                placeholder={t('mobile10Digit')}
-                value={formData.mobileNumber}
-                onChangeText={handleMobileNumberChange}
-                keyboardType="phone-pad"
-                maxLength={10}
-              />
-              {mobileError && formData.mobileNumber.length > 0 && (
-                <Text style={styles.errorText}>{mobileError}</Text>
-              )}
-              {!mobileError && isCheckingMobileDuplicate && (
-                <Text style={styles.helperText}>Checking mobile number...</Text>
-              )}
-              {!mobileError && mobileDuplicateExists && (
-                <Text style={styles.errorText}>{t('duplicateMobileNumber')}</Text>
-              )}
-              {formData.mobileNumber.length === 10 && !mobileError && !mobileDuplicateExists && !isCheckingMobileDuplicate && (
-                <Text style={styles.successText}>✓ Valid mobile number</Text>
-              )}
+              <TextInput style={[styles.input, mobileError && formData.mobileNumber.length > 0 || mobileDuplicateExists ? styles.inputError : null]} placeholder={t('mobile10Digit')} value={formData.mobileNumber} onChangeText={handleMobileNumberChange} keyboardType="phone-pad" maxLength={10} />
+              {mobileError && formData.mobileNumber.length > 0 && <Text style={styles.errorText}>{mobileError}</Text>}
+              {!mobileError && isCheckingMobileDuplicate && <Text style={styles.helperText}>Checking mobile number...</Text>}
+              {!mobileError && mobileDuplicateExists && <Text style={styles.errorText}>{t('duplicateMobileNumber')}</Text>}
+              {formData.mobileNumber.length === 10 && !mobileError && !mobileDuplicateExists && !isCheckingMobileDuplicate && <Text style={styles.successText}>✓ Valid mobile number</Text>}
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>{t('selectBlock')} *</Text>
-              <TouchableOpacity 
-                style={styles.selectButton}
-                onPress={() => setShowBlockModal(true)}
-              >
+              <TouchableOpacity style={styles.selectButton} onPress={() => setShowBlockModal(true)}>
                 <Text style={formData.blockId ? styles.selectTextFilled : styles.selectText}>
                   {blocks.find(b => b.id === formData.blockId)?.name || t('selectBlock')}
                 </Text>
@@ -507,84 +379,24 @@ const SelfRegisterScreen = ({ navigation }) => {
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>{t('selectWard')} {wards.length > 0 ? '*' : ''}</Text>
-              <TouchableOpacity 
-                style={styles.selectButton}
-                onPress={() => wards.length > 0 && setShowWardModal(true)}
-                disabled={!formData.blockId || wards.length === 0}
-              >
+              <TouchableOpacity style={styles.selectButton} onPress={() => wards.length > 0 && setShowWardModal(true)} disabled={!formData.blockId || wards.length === 0}>
                 <Text style={formData.wardId ? styles.selectTextFilled : styles.selectText}>
-                  {wards.find(w => w.id === formData.wardId)?.name || 
-                   (formData.blockId ? (wards.length > 0 ? t('selectWard') : 'No ward selection needed') : t('selectBlockFirst'))}
+                  {wards.find(w => w.id === formData.wardId)?.name || (formData.blockId ? wards.length > 0 ? t('selectWard') : 'No ward selection needed' : t('selectBlockFirst'))}
                 </Text>
               </TouchableOpacity>
-              {wards.length > 0 && !formData.wardId && (
-                <Text style={styles.noteText}>* Ward selection is mandatory for this block</Text>
-              )}
+              {wards.length > 0 && !formData.wardId && <Text style={styles.noteText}>* Ward selection is mandatory for this block</Text>}
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>{t('husbandName')} *</Text>
-              <TextInput
-                style={styles.input}
-                placeholder={t('enterHusbandName')}
-                value={formData.husbandName}
-                onChangeText={(text) => setFormData({...formData, husbandName: text})}
-              />
+              <TextInput style={styles.input} placeholder={t('enterHusbandName')} value={formData.husbandName} onChangeText={text => setFormData({
+              ...formData,
+              husbandName: text
+            })} />
             </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>{t('aadhaarNumber')} *</Text>
-              <View style={styles.aadhaarBoxContainer}>
-                <TextInput
-                  ref={aadhaarRef1}
-                  style={styles.aadhaarBox}
-                  placeholder="____"
-                  value={formData.aadharNumber.slice(0, 4)}
-                  onChangeText={(text) => {
-                    const cleaned = text.replace(/[^0-9]/g, '');
-                    const full = cleaned + formData.aadharNumber.slice(4);
-                    setFormData({...formData, aadharNumber: full});
-                    if (cleaned.length === 4) aadhaarRef2.current?.focus();
-                  }}
-                  keyboardType="numeric"
-                  maxLength={4}
-                />
-                <TextInput
-                  ref={aadhaarRef2}
-                  style={styles.aadhaarBox}
-                  placeholder="____"
-                  value={formData.aadharNumber.slice(4, 8)}
-                  onChangeText={(text) => {
-                    const cleaned = text.replace(/[^0-9]/g, '');
-                    const full = formData.aadharNumber.slice(0, 4) + cleaned + formData.aadharNumber.slice(8);
-                    setFormData({...formData, aadharNumber: full});
-                    if (cleaned.length === 4) aadhaarRef3.current?.focus();
-                  }}
-                  keyboardType="numeric"
-                  maxLength={4}
-                />
-                <TextInput
-                  ref={aadhaarRef3}
-                  style={styles.aadhaarBox}
-                  placeholder="____"
-                  value={formData.aadharNumber.slice(8, 12)}
-                  onChangeText={(text) => {
-                    const cleaned = text.replace(/[^0-9]/g, '');
-                    const full = formData.aadharNumber.slice(0, 8) + cleaned;
-                    setFormData({...formData, aadharNumber: full});
-                  }}
-                  keyboardType="numeric"
-                  maxLength={4}
-                />
-              </View>
-            </View>
-
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>{t('dateOfBirth')} *</Text>
-              <TouchableOpacity
-                style={styles.datePickerButton}
-                onPress={showDatepicker}
-              >
+              <TouchableOpacity style={styles.datePickerButton} onPress={showDatepicker}>
                 <Calendar size={20} color="#6b7280" style={styles.calendarIcon} />
                 <Text style={formData.date_of_birth_display ? styles.dateText : styles.datePlaceholder}>
                   {formData.date_of_birth_display || t('selectDate')}
@@ -594,35 +406,21 @@ const SelfRegisterScreen = ({ navigation }) => {
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>{t('age')}</Text>
-              <TextInput
-                style={[styles.input, { backgroundColor: '#f3f4f6', color: '#6b7280' }]}
-                placeholder={t('enterAge')}
-                value={formData.age}
-                editable={false}
-              />
+              <TextInput style={[styles.input, {
+              backgroundColor: '#f3f4f6',
+              color: '#6b7280'
+            }]} placeholder={t('enterAge')} value={formData.age} editable={false} />
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>{t('fullAddress')} *</Text>
-              <TextInput
-                style={[styles.input, styles.textArea]}
-                placeholder={t('enterFullAddress')}
-                value={formData.fullAddress}
-                onChangeText={(text) => setFormData({...formData, fullAddress: text})}
-                multiline
-                numberOfLines={3}
-                textAlignVertical="top"
-              />
+              <TextInput style={[styles.input, styles.textArea]} placeholder={t('enterFullAddress')} value={formData.fullAddress} onChangeText={text => setFormData({
+              ...formData,
+              fullAddress: text
+            })} multiline numberOfLines={3} textAlignVertical="top" />
             </View>
 
-            <TouchableOpacity
-              style={[
-                styles.submitButton,
-                (isSubmitting || !isAgeValid || !!mobileError || mobileDuplicateExists || isCheckingMobileDuplicate) && styles.disabledButton
-              ]}
-              onPress={handleSubmit}
-              disabled={isSubmitting || !!mobileError || mobileDuplicateExists || isCheckingMobileDuplicate}
-            >
+            <TouchableOpacity style={[styles.submitButton, (isSubmitting || !isAgeValid || !!mobileError || mobileDuplicateExists || isCheckingMobileDuplicate) && styles.disabledButton]} onPress={handleSubmit} disabled={isSubmitting || !!mobileError || mobileDuplicateExists || isCheckingMobileDuplicate}>
               <Text style={styles.submitText}>
                 {isSubmitting ? t('submitting') : t('submitRegistration')}
               </Text>
@@ -632,15 +430,10 @@ const SelfRegisterScreen = ({ navigation }) => {
       </KeyboardAvoidingView>
 
       {/* Success Modal */}
-      <Modal
-        visible={showSuccessModal}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => {
-          setShowSuccessModal(false);
-          navigation.navigate('Login');
-        }}
-      >
+      <Modal visible={showSuccessModal} transparent={true} animationType="fade" onRequestClose={() => {
+      setShowSuccessModal(false);
+      navigation.navigate('Login');
+    }}>
         <View style={styles.successModalOverlay}>
           <View style={styles.successModalContent}>
             <View style={styles.successIconContainer}>
@@ -653,172 +446,124 @@ const SelfRegisterScreen = ({ navigation }) => {
             <Text style={styles.successModalMessage}>
               {t('visitWebsiteForStatus')}
             </Text>
-            <TouchableOpacity
-              onPress={async () => {
-                try {
-                  await WebBrowser.openBrowserAsync('https://www.nirikhyanapuri.in/', {
-                    toolbarColor: '#D2691E',
-                    controlsColor: '#ffffff',
-                    showTitle: true,
-                    enableBarCollapsing: false,
-                  });
-                } catch (error) {
-                  console.error('Error opening website:', error);
-                }
-              }}
-            >
+            <TouchableOpacity onPress={async () => {
+            try {
+              await WebBrowser.openBrowserAsync('https://www.nirikhyanapuri.in/', {
+                toolbarColor: '#D2691E',
+                controlsColor: '#ffffff',
+                showTitle: true,
+                enableBarCollapsing: false
+              });
+            } catch (error) {}
+          }}>
               <Text style={styles.successModalWebsite}>www.nirikhyanapuri.in</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity
-              style={styles.successModalButton}
-              onPress={async () => {
-                try {
-                  await WebBrowser.openBrowserAsync('https://www.nirikhyanapuri.in/', {
-                    toolbarColor: '#D2691E',
-                    controlsColor: '#ffffff',
-                    showTitle: true,
-                    enableBarCollapsing: false,
-                  });
-                  setShowSuccessModal(false);
-                  navigation.navigate('Login');
-                } catch (error) {
-                  console.error('Error opening website:', error);
-                  setShowSuccessModal(false);
-                  navigation.navigate('Login');
-                }
-              }}
-            >
+            <TouchableOpacity style={styles.successModalButton} onPress={async () => {
+            try {
+              await WebBrowser.openBrowserAsync('https://www.nirikhyanapuri.in/', {
+                toolbarColor: '#D2691E',
+                controlsColor: '#ffffff',
+                showTitle: true,
+                enableBarCollapsing: false
+              });
+              setShowSuccessModal(false);
+              navigation.navigate('Login');
+            } catch (error) {
+              setShowSuccessModal(false);
+              navigation.navigate('Login');
+            }
+          }}>
               <Text style={styles.successModalButtonText}>{t('visitWebsite')}</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity
-              style={styles.successModalCloseButton}
-              onPress={() => {
-                setShowSuccessModal(false);
-                navigation.navigate('Login');
-              }}
-            >
+            <TouchableOpacity style={styles.successModalCloseButton} onPress={() => {
+            setShowSuccessModal(false);
+            navigation.navigate('Login');
+          }}>
               <Text style={styles.successModalCloseText}>{t('close')}</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
 
-      {showDatePicker && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={selectedDate}
-          mode="date"
-          is24Hour={true}
-          display="default"
-          onChange={handleDateChange}
-          maximumDate={new Date()}
-        />
-      )}
+      {showDatePicker && <DateTimePicker testID="dateTimePicker" value={selectedDate} mode="date" is24Hour={true} display="default" onChange={handleDateChange} maximumDate={new Date()} />}
 
       {/* Block Modal */}
-      <KeyboardSafeModal
-        visible={showBlockModal}
-        position="center"
-        onRequestClose={() => {
-          setShowBlockModal(false);
-          setBlockSearch('');
-        }}
-        closeOnBackdropPress={true}
-      >
+      <KeyboardSafeModal visible={showBlockModal} position="center" onRequestClose={() => {
+      setShowBlockModal(false);
+      setBlockSearch('');
+    }} closeOnBackdropPress={true}>
         <View style={styles.modalHeader}>
           <Text style={styles.modalTitle}>{t('selectBlock')}</Text>
           <TouchableOpacity onPress={() => {
-            setShowBlockModal(false);
-            setBlockSearch('');
-          }}>
+          setShowBlockModal(false);
+          setBlockSearch('');
+        }}>
             <Text style={styles.modalClose}>✕</Text>
           </TouchableOpacity>
         </View>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search block..."
-          value={blockSearch}
-          onChangeText={setBlockSearch}
-        />
-        <ScrollView style={{ maxHeight: 400 }} keyboardShouldPersistTaps="handled">
-          {blocks
-            .filter(block => block.name.toLowerCase().includes(blockSearch.toLowerCase()))
-            .map(block => (
-              <TouchableOpacity
-                key={block.id}
-                style={styles.modalOption}
-                onPress={() => {
-                  setFormData({ ...formData, blockId: block.id, wardId: '' });
-                  setShowBlockModal(false);
-                  setBlockSearch('');
-                }}
-              >
+        <TextInput style={styles.searchInput} placeholder="Search block..." value={blockSearch} onChangeText={setBlockSearch} />
+        <ScrollView style={{
+        maxHeight: 400
+      }} keyboardShouldPersistTaps="handled">
+          {blocks.filter(block => block.name.toLowerCase().includes(blockSearch.toLowerCase())).map(block => <TouchableOpacity key={block.id} style={styles.modalOption} onPress={() => {
+          setFormData({
+            ...formData,
+            blockId: block.id,
+            wardId: ''
+          });
+          setShowBlockModal(false);
+          setBlockSearch('');
+        }}>
                 <Text style={styles.modalOptionText}>{block.name}</Text>
-              </TouchableOpacity>
-            ))}
+              </TouchableOpacity>)}
         </ScrollView>
       </KeyboardSafeModal>
 
       {/* Ward Modal */}
-      <KeyboardSafeModal
-        visible={showWardModal}
-        position="center"
-        onRequestClose={() => {
-          setShowWardModal(false);
-          setWardSearch('');
-        }}
-        closeOnBackdropPress={true}
-      >
+      <KeyboardSafeModal visible={showWardModal} position="center" onRequestClose={() => {
+      setShowWardModal(false);
+      setWardSearch('');
+    }} closeOnBackdropPress={true}>
         <View style={styles.modalHeader}>
           <Text style={styles.modalTitle}>{t('selectWard')}</Text>
           <TouchableOpacity onPress={() => {
-            setShowWardModal(false);
-            setWardSearch('');
-          }}>
+          setShowWardModal(false);
+          setWardSearch('');
+        }}>
             <Text style={styles.modalClose}>✕</Text>
           </TouchableOpacity>
         </View>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search ward..."
-          value={wardSearch}
-          onChangeText={setWardSearch}
-        />
-        <ScrollView style={{ maxHeight: 400 }} keyboardShouldPersistTaps="handled">
-          {wards
-            .filter(ward => ward.name.toLowerCase().includes(wardSearch.toLowerCase()))
-            .map(ward => (
-              <TouchableOpacity
-                key={ward.id}
-                style={styles.modalOption}
-                onPress={() => {
-                  setFormData({ ...formData, wardId: ward.id });
-                  setShowWardModal(false);
-                  setWardSearch('');
-                }}
-              >
+        <TextInput style={styles.searchInput} placeholder="Search ward..." value={wardSearch} onChangeText={setWardSearch} />
+        <ScrollView style={{
+        maxHeight: 400
+      }} keyboardShouldPersistTaps="handled">
+          {wards.filter(ward => ward.name.toLowerCase().includes(wardSearch.toLowerCase())).map(ward => <TouchableOpacity key={ward.id} style={styles.modalOption} onPress={() => {
+          setFormData({
+            ...formData,
+            wardId: ward.id
+          });
+          setShowWardModal(false);
+          setWardSearch('');
+        }}>
                 <Text style={styles.modalOptionText}>{ward.name}</Text>
-              </TouchableOpacity>
-            ))}
+              </TouchableOpacity>)}
         </ScrollView>
       </KeyboardSafeModal>
-    </SafeAreaView>
-  );
+    </SafeAreaView>;
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fad5a5',
+    backgroundColor: '#fad5a5'
   },
   header: {
     backgroundColor: '#D2691E',
     padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   backButton: {
     width: 36,
@@ -826,38 +571,37 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: 'white',
+    color: 'white'
   },
   keyboardAvoidingView: {
-    flex: 1,
+    flex: 1
   },
   content: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 12,
+    paddingTop: 12
   },
   scrollContent: {
-    paddingBottom: 10,
+    paddingBottom: 10
   },
   form: {
     backgroundColor: 'white',
     borderRadius: 12,
-    padding: 20,
-    
+    padding: 20
   },
   inputGroup: {
-    marginBottom: 16,
+    marginBottom: 16
   },
   inputLabel: {
     fontSize: 14,
     fontWeight: '500',
     color: '#374151',
-    marginBottom: 6,
+    marginBottom: 6
   },
   input: {
     padding: 14,
@@ -865,35 +609,21 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#e5e7eb',
     fontSize: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
-  aadhaarBoxContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 16,
-  },
-  aadhaarBox: {
-    flex: 1,
-    padding: 14,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: '#e5e7eb',
-    fontSize: 16,
-    backgroundColor: '#ffffff',
-    textAlign: 'center',
-  },
+
   textArea: {
-    minHeight: 80,
+    minHeight: 80
   },
   pickerContainer: {
     borderWidth: 2,
     borderColor: '#e5e7eb',
     borderRadius: 8,
     marginBottom: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   picker: {
-    height: 60,
+    height: 60
   },
   datePickerButton: {
     padding: 14,
@@ -903,56 +633,56 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#ffffff',
-    marginBottom: 16,
+    marginBottom: 16
   },
   calendarIcon: {
-    marginRight: 12,
+    marginRight: 12
   },
   dateText: {
     fontSize: 16,
-    color: '#111827',
+    color: '#111827'
   },
   datePlaceholder: {
     fontSize: 16,
-    color: '#9ca3af',
+    color: '#9ca3af'
   },
   submitButton: {
     padding: 16,
     borderRadius: 8,
     backgroundColor: '#8B4513',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 20
   },
   disabledButton: {
     backgroundColor: '#9ca3af',
-    opacity: 0.6,
+    opacity: 0.6
   },
   inputError: {
     borderColor: '#EF4444',
-    borderWidth: 2,
+    borderWidth: 2
   },
   errorText: {
     fontSize: 12,
     color: '#EF4444',
     marginTop: 4,
-    marginBottom: 8,
+    marginBottom: 8
   },
   successText: {
     fontSize: 12,
     color: '#10B981',
     marginTop: 4,
-    marginBottom: 8,
+    marginBottom: 8
   },
   helperText: {
     fontSize: 12,
     color: '#6B7280',
     marginTop: 4,
-    marginBottom: 8,
+    marginBottom: 8
   },
   submitText: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   uploadButton: {
     padding: 14,
@@ -963,70 +693,70 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#ffffff',
     marginBottom: 16,
-    gap: 8,
+    gap: 8
   },
   uploadText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#6b7280'
   },
   comingSoon: {
     textAlign: 'center',
     color: '#6b7280',
     fontSize: 16,
-    marginTop: 40,
+    marginTop: 40
   },
   uploadModalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   uploadModalContent: {
     backgroundColor: 'white',
     borderRadius: 16,
     padding: 24,
     width: '85%',
-    maxWidth: 400,
+    maxWidth: 400
   },
   uploadModalTitle: {
     fontSize: 20,
     fontWeight: '600',
     color: '#111827',
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   uploadModalSubtitle: {
     fontSize: 14,
     color: '#6b7280',
     marginBottom: 24,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   uploadOptionButton: {
     backgroundColor: '#8b4513',
     borderRadius: 8,
     padding: 16,
     marginBottom: 12,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   uploadOptionText: {
     color: 'white',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   uploadCancelButton: {
     backgroundColor: '#f3f4f6',
     borderRadius: 8,
     padding: 16,
     marginTop: 8,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   uploadCancelText: {
     color: '#6b7280',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   languageToggle: {
-    marginLeft: 'auto',
+    marginLeft: 'auto'
   },
   selectButton: {
     padding: 14,
@@ -1035,22 +765,22 @@ const styles = StyleSheet.create({
     borderColor: '#e5e7eb',
     backgroundColor: '#ffffff',
     marginBottom: 16,
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   selectText: {
     fontSize: 16,
-    color: '#9ca3af',
+    color: '#9ca3af'
   },
   selectTextFilled: {
     fontSize: 16,
-    color: '#111827',
+    color: '#111827'
   },
   noteText: {
     fontSize: 12,
     color: '#EF4444',
     marginTop: -12,
     marginBottom: 16,
-    fontStyle: 'italic',
+    fontStyle: 'italic'
   },
   modalHeader: {
     flexDirection: 'row',
@@ -1058,16 +788,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: '#E5E7EB'
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1F2937',
+    color: '#1F2937'
   },
   modalClose: {
     fontSize: 24,
-    color: '#6B7280',
+    color: '#6B7280'
   },
   searchInput: {
     margin: 16,
@@ -1077,23 +807,23 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
     borderRadius: 8,
     fontSize: 14,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#F9FAFB'
   },
   modalOption: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: '#F3F4F6'
   },
   modalOptionText: {
     fontSize: 16,
-    color: '#374151',
+    color: '#374151'
   },
   successModalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 20
   },
   successModalContent: {
     backgroundColor: 'white',
@@ -1103,10 +833,13 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     width: '100%',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {
+      width: 0,
+      height: 4
+    },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-    elevation: 8,
+    elevation: 8
   },
   successIconContainer: {
     width: 80,
@@ -1115,26 +848,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#D1FAE5',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 20
   },
   successIcon: {
     fontSize: 48,
     color: '#059669',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   successModalTitle: {
     fontSize: 24,
     fontWeight: '700',
     color: '#059669',
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   successModalMessage: {
     fontSize: 15,
     color: '#4B5563',
     marginBottom: 12,
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 22
   },
   successModalWebsite: {
     fontSize: 16,
@@ -1143,7 +876,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 24,
     textAlign: 'center',
-    textDecorationLine: 'underline',
+    textDecorationLine: 'underline'
   },
   successModalButton: {
     backgroundColor: '#D2691E',
@@ -1152,12 +885,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     width: '100%',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 12
   },
   successModalButtonText: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   successModalCloseButton: {
     backgroundColor: '#F3F4F6',
@@ -1165,13 +898,13 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 32,
     width: '100%',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   successModalCloseText: {
     color: '#6B7280',
     fontSize: 16,
-    fontWeight: '600',
-  },
+    fontWeight: '600'
+  }
 });
-
 export default SelfRegisterScreen;
+

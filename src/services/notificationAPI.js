@@ -9,43 +9,44 @@ export const notificationAPI = {
     if (params.category) queryParams.append('category', params.category);
     if (params.priority) queryParams.append('priority', params.priority);
     
-    const url = `/api/v1/notifications/${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+    const url = `/api/v2/notifications/${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
     const response = await api.get(url);
     return response.data;
   },
   
   getUnreadCount: async () => {
-    const response = await api.get('/api/v1/notifications/unread-count');
+    const response = await api.get('/api/v2/notifications/unread-count');
     return response.data.unread_count;
   },
   
   getStatistics: async () => {
-    const response = await api.get('/api/v1/notifications/statistics');
+    const response = await api.get('/api/v2/notifications/statistics');
     return response.data;
   },
   
   getById: async (notificationId) => {
-    const response = await api.get(`/api/v1/notifications/${notificationId}`);
+    const response = await api.get(`/api/v2/notifications/${notificationId}`);
     return response.data;
   },
   
   markAsRead: async (notificationId) => {
-    const response = await api.put(`/api/v1/notifications/${notificationId}/read`);
+    const response = await api.put(`/api/v2/notifications/${notificationId}/read`);
     return response.data;
   },
   
   markAllAsRead: async () => {
-    const response = await api.put('/api/v1/notifications/mark-all-read');
+    const response = await api.put('/api/v2/notifications/mark-all-read');
     return response.data;
   },
   
   deleteNotification: async (notificationId) => {
-    const response = await api.delete(`/api/v1/notifications/${notificationId}`);
+    const response = await api.delete(`/api/v2/notifications/${notificationId}`);
     return response.data;
   },
   
   clearAllRead: async () => {
-    const response = await api.delete('/api/v1/notifications/clear-all');
+    const response = await api.delete('/api/v2/notifications/clear-all');
     return response.data;
   }
 };
+

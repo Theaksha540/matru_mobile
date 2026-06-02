@@ -26,78 +26,33 @@ const PaginationControls = ({
   hasPreviousPage,
   hasNextPage,
   loading = false,
+  itemLabel = 'patient'
 }) => {
-  console.log('[PaginationControls] Render:', {
-    currentPage,
-    totalPages,
-    totalCount,
-    startIndex,
-    endIndex,
-    hasPreviousPage,
-    hasNextPage,
-    loading
-  });
-  
   // Always show pagination info, even if only one page
   // This helps users see the total count
   const showNavigation = totalPages > 1;
-
-  return (
-    <View style={styles.paginationContainer}>
+  return <View style={styles.paginationContainer}>
       {/* Previous Button - only show if multiple pages */}
-      {showNavigation && (
-        <TouchableOpacity
-          style={[
-            styles.paginationButton,
-            (!hasPreviousPage || loading) && styles.paginationButtonDisabled,
-          ]}
-          onPress={onPreviousPage}
-          disabled={!hasPreviousPage || loading}
-          activeOpacity={0.7}
-        >
-          <ChevronLeft 
-            size={20} 
-            color={!hasPreviousPage || loading ? '#9ca3af' : '#374151'} 
-          />
-        </TouchableOpacity>
-      )}
+      {showNavigation && <TouchableOpacity style={[styles.paginationButton, (!hasPreviousPage || loading) && styles.paginationButtonDisabled]} onPress={onPreviousPage} disabled={!hasPreviousPage || loading} activeOpacity={0.7}>
+          <ChevronLeft size={20} color={!hasPreviousPage || loading ? '#9ca3af' : '#374151'} />
+        </TouchableOpacity>}
 
       {/* Page Info - always show */}
       <View style={[styles.paginationInfo, !showNavigation && styles.paginationInfoCentered]}>
-        {showNavigation && (
-          <Text style={styles.paginationText}>
+        {showNavigation && <Text style={styles.paginationText}>
             Page {currentPage} of {totalPages}
-          </Text>
-        )}
+          </Text>}
         <Text style={styles.paginationSubtext}>
-          {showNavigation 
-            ? `Showing ${startIndex}-${endIndex} of ${totalCount}`
-            : `Total: ${totalCount} patient${totalCount !== 1 ? 's' : ''}`
-          }
+          {showNavigation ? `Showing ${startIndex}-${endIndex} of ${totalCount}` : `Total: ${totalCount} ${itemLabel}${totalCount !== 1 ? 's' : ''}`}
         </Text>
       </View>
 
       {/* Next Button - only show if multiple pages */}
-      {showNavigation && (
-        <TouchableOpacity
-          style={[
-            styles.paginationButton,
-            (!hasNextPage || loading) && styles.paginationButtonDisabled,
-          ]}
-          onPress={onNextPage}
-          disabled={!hasNextPage || loading}
-          activeOpacity={0.7}
-        >
-          <ChevronRight 
-            size={20} 
-            color={!hasNextPage || loading ? '#9ca3af' : '#374151'} 
-          />
-        </TouchableOpacity>
-      )}
-    </View>
-  );
+      {showNavigation && <TouchableOpacity style={[styles.paginationButton, (!hasNextPage || loading) && styles.paginationButtonDisabled]} onPress={onNextPage} disabled={!hasNextPage || loading} activeOpacity={0.7}>
+          <ChevronRight size={20} color={!hasNextPage || loading ? '#9ca3af' : '#374151'} />
+        </TouchableOpacity>}
+    </View>;
 };
-
 const styles = StyleSheet.create({
   paginationContainer: {
     flexDirection: 'row',
@@ -113,11 +68,11 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: 1
     },
     shadowOpacity: 0.05,
     shadowRadius: 2,
-    elevation: 1,
+    elevation: 1
   },
   paginationButton: {
     width: 44,
@@ -127,31 +82,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#e5e7eb'
   },
   paginationButtonDisabled: {
     backgroundColor: '#f3f4f6',
     borderColor: '#e5e7eb',
-    opacity: 0.5,
+    opacity: 0.5
   },
   paginationInfo: {
     alignItems: 'center',
-    flex: 1,
+    flex: 1
   },
   paginationInfoCentered: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   paginationText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#374151',
-    marginBottom: 2,
+    marginBottom: 2
   },
   paginationSubtext: {
     fontSize: 12,
-    color: '#6b7280',
-  },
+    color: '#6b7280'
+  }
 });
-
 export default PaginationControls;

@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Alert,
-  Modal,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, Modal, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import { ArrowLeft, Upload } from 'lucide-react-native';
@@ -22,9 +11,12 @@ import { adminAPI, grievanceAPI } from '../../services/api';
 import LanguageToggle from '../../components/LanguageToggle';
 import KeyboardSafeModal from '../../components/KeyboardSafeModal';
 import '../../i18n';
-
-const SubmitGrievanceScreen = ({ navigation }) => {
-  const { t } = useTranslation();
+const SubmitGrievanceScreen = ({
+  navigation
+}) => {
+  const {
+    t
+  } = useTranslation();
   const [formData, setFormData] = useState({
     grievanceName: '',
     grievancePhone: '',
@@ -43,12 +35,10 @@ const SubmitGrievanceScreen = ({ navigation }) => {
   const [showWardModal, setShowWardModal] = useState(false);
   const [blockSearch, setBlockSearch] = useState('');
   const [wardSearch, setWardSearch] = useState('');
-
   useEffect(() => {
     loadDistricts();
     loadBlocks();
   }, []);
-
   useEffect(() => {
     if (formData.grievanceBlockId) {
       loadWards(formData.grievanceBlockId);
@@ -56,168 +46,134 @@ const SubmitGrievanceScreen = ({ navigation }) => {
       setWards([]);
     }
   }, [formData.grievanceBlockId]);
-
   const loadDistricts = async () => {
     try {
       const data = await adminAPI.getDistricts();
       setDistricts(data);
-    } catch (error) {
-      console.error('Error loading districts:', error);
-    }
+    } catch (error) {}
   };
-
   const loadBlocks = async () => {
     try {
       const data = await adminAPI.getBlocks();
       setBlocks(data);
-    } catch (error) {
-      console.error('Error loading blocks:', error);
-    }
+    } catch (error) {}
   };
-
-  const loadWards = async (blockId) => {
+  const loadWards = async blockId => {
     try {
-      const data = await adminAPI.getWards({ block_id: blockId });
+      const data = await adminAPI.getWards({
+        block_id: blockId
+      });
       setWards(data);
-    } catch (error) {
-      console.error('Error loading wards:', error);
-    }
+    } catch (error) {}
   };
-
   const pickGrievanceDocument = async () => {
     setShowUploadModal(true);
   };
-
   const handleImagePick = async () => {
     setShowUploadModal(false);
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: 'images',
         allowsEditing: false,
-        quality: 0.8,
+        quality: 0.8
       });
-      
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const file = result.assets[0];
-        
+
         // Validate file size (10MB)
         if (file.fileSize && file.fileSize > 10 * 1024 * 1024) {
           Alert.alert('Error', 'File too large. Maximum size: 10MB');
           return;
         }
-        
         setGrievanceAttachment({
           uri: file.uri,
           name: file.fileName || `image_${Date.now()}.jpg`,
-          type: file.mimeType || 'image/jpeg',
+          type: file.mimeType || 'image/jpeg'
         });
       }
     } catch (error) {
-      console.error('Image picker error:', error);
       Alert.alert('Error', 'Failed to pick image');
     }
   };
-
   const handleCameraPick = async () => {
     setShowUploadModal(false);
     try {
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: 'images',
         allowsEditing: false,
-        quality: 0.8,
+        quality: 0.8
       });
-      
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const file = result.assets[0];
-        
+
         // Validate file size (10MB)
         if (file.fileSize && file.fileSize > 10 * 1024 * 1024) {
           Alert.alert('Error', 'File too large. Maximum size: 10MB');
           return;
         }
-        
         setGrievanceAttachment({
           uri: file.uri,
           name: file.fileName || `camera_${Date.now()}.jpg`,
-          type: file.mimeType || 'image/jpeg',
+          type: file.mimeType || 'image/jpeg'
         });
       }
     } catch (error) {
-      console.error('Camera picker error:', error);
       Alert.alert('Error', 'Failed to take photo');
     }
   };
-
   const handleDocumentPick = async () => {
     setShowUploadModal(false);
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: 'application/pdf',
-        copyToCacheDirectory: true,
+        copyToCacheDirectory: true
       });
-      
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const file = result.assets[0];
-        
+
         // Validate file size (10MB)
         if (file.size && file.size > 10 * 1024 * 1024) {
           Alert.alert('Error', 'File too large. Maximum size: 10MB');
           return;
         }
-        
         setGrievanceAttachment({
           uri: file.uri,
           name: file.name,
-          type: file.mimeType,
+          type: file.mimeType
         });
       }
     } catch (error) {
-      console.error('Document picker error:', error);
       Alert.alert('Error', 'Failed to pick document');
     }
   };
-
   const handleSubmit = async () => {
     if (!formData.grievanceName || !formData.grievancePhone || !formData.grievanceComplaint || !formData.grievanceBlockId) {
       Alert.alert(t('error'), t('pleaseEnterMandatoryFields'));
       return;
     }
-
     if (formData.grievanceBlockId && wards.length > 0 && !formData.grievanceWardId) {
       Alert.alert(t('error'), 'Ward selection is mandatory for this block');
       return;
     }
-
     if (formData.grievancePhone.length !== 10) {
       Alert.alert(t('error'), t('mobileNumberMust10Digits'));
       return;
     }
-
     setIsSubmitting(true);
-    console.log('Starting grievance submission...');
-    console.log('Form data:', formData);
-    console.log('Attachment:', grievanceAttachment);
-    
     try {
       const submitData = {
         name: formData.grievanceName,
         mobile_number: formData.grievancePhone,
         grievance_note: formData.grievanceComplaint,
         block_id: parseInt(formData.grievanceBlockId),
-        district_id: parseInt(formData.grievanceDistrictId || 1),
+        district_id: parseInt(formData.grievanceDistrictId || 1)
       };
-      
       if (formData.grievanceWardId) {
         submitData.ward_id = parseInt(formData.grievanceWardId);
       }
-      
       if (grievanceAttachment) {
         submitData.attachment = grievanceAttachment;
       }
-      
-      console.log('Submit data prepared:', submitData);
-      console.log('API URL:', `${process.env.EXPO_PUBLIC_API_URL}/api/v1/grievances/`);
-      
       // Create FormData for proper file upload
       const formDataToSend = new FormData();
       formDataToSend.append('name', submitData.name);
@@ -225,46 +181,38 @@ const SubmitGrievanceScreen = ({ navigation }) => {
       formDataToSend.append('grievance_note', submitData.grievance_note);
       formDataToSend.append('block_id', submitData.block_id.toString());
       formDataToSend.append('district_id', submitData.district_id.toString());
-      
       if (submitData.ward_id) {
         formDataToSend.append('ward_id', submitData.ward_id.toString());
       }
-      
       if (grievanceAttachment) {
         formDataToSend.append('attachment', {
           uri: grievanceAttachment.uri,
           type: grievanceAttachment.type,
-          name: grievanceAttachment.name,
+          name: grievanceAttachment.name
         });
       }
-      
-      const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/api/v1/grievances/`, formDataToSend, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/api/v2/grievances/`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
-      
-      console.log('API Response:', response.data);
-      
-      Alert.alert(
-        t('success'), 
-        t('grievanceSubmittedSuccessfully') + '\n\nTicket Number: ' + response.data.ticket_number + '\n\nPlease save this ticket number for future reference.',
-        [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
-      );
+      Alert.alert(t('success'), t('grievanceSubmittedSuccessfully') + '\n\nTicket Number: ' + response.data.ticket_number + '\n\nPlease save this ticket number for future reference.', [{
+        text: 'OK',
+        onPress: () => navigation.navigate('Login')
+      }]);
     } catch (error) {
-      console.error('Grievance submit error:', error);
       const errorDetail = error.response?.data?.detail;
-      
       if (errorDetail) {
         if (errorDetail.includes('Invalid mobile number format')) {
           Alert.alert(t('error'), 'Invalid mobile number format. Must be 10 digits starting with 6-9.');
         } else if (errorDetail.includes('not registered')) {
-          Alert.alert(
-            'Not Registered',
-            'You are not registered. Please register first as a Pregnant Woman before submitting a grievance.',
-            [
-              { text: 'Cancel', style: 'cancel' },
-              { text: 'Register Now', onPress: () => navigation.navigate('SelfRegister') }
-            ]
-          );
+          Alert.alert('Not Registered', 'You are not registered. Please register first as a Pregnant Woman before submitting a grievance.', [{
+            text: 'Cancel',
+            style: 'cancel'
+          }, {
+            text: 'Register Now',
+            onPress: () => navigation.navigate('SelfRegister')
+          }]);
         } else if (errorDetail.includes('Invalid file type')) {
           Alert.alert(t('error'), 'Invalid file type. Allowed types: PDF, JPG, JPEG, PNG');
         } else if (errorDetail.includes('File too large')) {
@@ -283,87 +231,59 @@ const SubmitGrievanceScreen = ({ navigation }) => {
       setIsSubmitting(false);
     }
   };
-
-  return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
+  return <SafeAreaView style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
       <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <ArrowLeft size={24} color="#111827" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t('submitGrievance')}</Text>
         <LanguageToggle style={styles.languageToggle} />
       </View>
 
-      <KeyboardAvoidingView 
-        style={styles.keyboardAvoidingView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView 
-          style={styles.content}
-          keyboardShouldPersistTaps="handled"
-        >
+      <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
         <View style={styles.form}>
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>{t('fullName')} *</Text>
-            <TextInput
-              style={styles.input}
-              placeholder={t('enterFullName')}
-              value={formData.grievanceName}
-              onChangeText={(text) => setFormData({...formData, grievanceName: text})}
-            />
+            <TextInput style={styles.input} placeholder={t('enterFullName')} value={formData.grievanceName} onChangeText={text => setFormData({
+              ...formData,
+              grievanceName: text
+            })} />
           </View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>{t('phoneNumber')} *</Text>
-            <TextInput
-              style={styles.input}
-              placeholder={t('mobile10Digit')}
-              value={formData.grievancePhone}
-              onChangeText={(text) => setFormData({...formData, grievancePhone: text})}
-              keyboardType="phone-pad"
-              maxLength={10}
-            />
+            <TextInput style={styles.input} placeholder={t('mobile10Digit')} value={formData.grievancePhone} onChangeText={text => setFormData({
+              ...formData,
+              grievancePhone: text
+            })} keyboardType="phone-pad" maxLength={10} />
           </View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>{t('complaintDetails')} *</Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder={t('complaintDetails')}
-              value={formData.grievanceComplaint}
-              onChangeText={(text) => setFormData({...formData, grievanceComplaint: text})}
-              multiline
-              numberOfLines={6}
-              textAlignVertical="top"
-            />
+            <TextInput style={[styles.input, styles.textArea]} placeholder={t('complaintDetails')} value={formData.grievanceComplaint} onChangeText={text => setFormData({
+              ...formData,
+              grievanceComplaint: text
+            })} multiline numberOfLines={6} textAlignVertical="top" />
           </View>
 
-          {districts.length > 1 && (
-            <View style={styles.inputGroup}>
+          {districts.length > 1 && <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>{t('selectDistrict')}</Text>
               <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={formData.grievanceDistrictId || '1'}
-                  onValueChange={(value) => setFormData({...formData, grievanceDistrictId: value, grievanceBlockId: '', grievanceWardId: ''})}
-                  style={styles.picker}
-                >
-                  {districts.map((district) => (
-                    <Picker.Item key={district.id} label={district.name} value={district.id} />
-                  ))}
+                <Picker selectedValue={formData.grievanceDistrictId || '1'} onValueChange={value => setFormData({
+                ...formData,
+                grievanceDistrictId: value,
+                grievanceBlockId: '',
+                grievanceWardId: ''
+              })} style={styles.picker}>
+                  {districts.map(district => <Picker.Item key={district.id} label={district.name} value={district.id} />)}
                 </Picker>
               </View>
-            </View>
-          )}
+            </View>}
 
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>{t('selectBlock')} *</Text>
-            <TouchableOpacity 
-              style={styles.selectButton}
-              onPress={() => setShowBlockModal(true)}
-            >
+            <TouchableOpacity style={styles.selectButton} onPress={() => setShowBlockModal(true)}>
               <Text style={formData.grievanceBlockId ? styles.selectTextFilled : styles.selectText}>
                 {blocks.find(b => b.id === formData.grievanceBlockId)?.name || t('selectBlock')}
               </Text>
@@ -372,36 +292,22 @@ const SubmitGrievanceScreen = ({ navigation }) => {
 
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>{t('selectWard')} {wards.length > 0 ? '*' : ''}</Text>
-            <TouchableOpacity 
-              style={styles.selectButton}
-              onPress={() => wards.length > 0 && setShowWardModal(true)}
-              disabled={!formData.grievanceBlockId || wards.length === 0}
-            >
+            <TouchableOpacity style={styles.selectButton} onPress={() => wards.length > 0 && setShowWardModal(true)} disabled={!formData.grievanceBlockId || wards.length === 0}>
               <Text style={formData.grievanceWardId ? styles.selectTextFilled : styles.selectText}>
-                {wards.find(w => w.id === formData.grievanceWardId)?.name || 
-                 (formData.grievanceBlockId ? (wards.length > 0 ? t('selectWard') : 'No ward selection needed') : t('selectBlockFirst'))}
+                {wards.find(w => w.id === formData.grievanceWardId)?.name || (formData.grievanceBlockId ? wards.length > 0 ? t('selectWard') : 'No ward selection needed' : t('selectBlockFirst'))}
               </Text>
             </TouchableOpacity>
-            {wards.length > 0 && !formData.grievanceWardId && (
-              <Text style={styles.noteText}>* Ward selection is mandatory for this block</Text>
-            )}
+            {wards.length > 0 && !formData.grievanceWardId && <Text style={styles.noteText}>* Ward selection is mandatory for this block</Text>}
           </View>
 
-          <TouchableOpacity
-            style={styles.uploadButton}
-            onPress={pickGrievanceDocument}
-          >
+          <TouchableOpacity style={styles.uploadButton} onPress={pickGrievanceDocument}>
             <Upload size={20} color="#8b4513" />
             <Text style={styles.uploadText}>
               {grievanceAttachment ? grievanceAttachment.name : t('uploadAttachment')}
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.submitButton, (!formData.grievanceName || !formData.grievancePhone || !formData.grievanceComplaint || !formData.grievanceBlockId || (wards.length > 0 && !formData.grievanceWardId) || isSubmitting) && styles.disabledButton]}
-            onPress={handleSubmit}
-            disabled={!formData.grievanceName || !formData.grievancePhone || !formData.grievanceComplaint || !formData.grievanceBlockId || (wards.length > 0 && !formData.grievanceWardId) || isSubmitting}
-          >
+          <TouchableOpacity style={[styles.submitButton, (!formData.grievanceName || !formData.grievancePhone || !formData.grievanceComplaint || !formData.grievanceBlockId || wards.length > 0 && !formData.grievanceWardId || isSubmitting) && styles.disabledButton]} onPress={handleSubmit} disabled={!formData.grievanceName || !formData.grievancePhone || !formData.grievanceComplaint || !formData.grievanceBlockId || wards.length > 0 && !formData.grievanceWardId || isSubmitting}>
             <Text style={styles.submitText}>
               {isSubmitting ? t('submitting') : t('submitGrievanceBtn')}
             </Text>
@@ -428,10 +334,7 @@ const SubmitGrievanceScreen = ({ navigation }) => {
               <Text style={styles.uploadOptionText}>📄 Document (PDF)</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity 
-              style={styles.uploadCancelButton} 
-              onPress={() => setShowUploadModal(false)}
-            >
+            <TouchableOpacity style={styles.uploadCancelButton} onPress={() => setShowUploadModal(false)}>
               <Text style={styles.uploadCancelText}>Cancel</Text>
             </TouchableOpacity>
           </View>
@@ -439,107 +342,80 @@ const SubmitGrievanceScreen = ({ navigation }) => {
       </Modal>
 
       {/* Block Modal */}
-      <KeyboardSafeModal
-        visible={showBlockModal}
-        position="center"
-        onRequestClose={() => {
-          setShowBlockModal(false);
-          setBlockSearch('');
-        }}
-        closeOnBackdropPress={true}
-      >
+      <KeyboardSafeModal visible={showBlockModal} position="center" onRequestClose={() => {
+      setShowBlockModal(false);
+      setBlockSearch('');
+    }} closeOnBackdropPress={true}>
         <View style={styles.modalHeader}>
           <Text style={styles.modalTitle}>{t('selectBlock')}</Text>
           <TouchableOpacity onPress={() => {
-            setShowBlockModal(false);
-            setBlockSearch('');
-          }}>
+          setShowBlockModal(false);
+          setBlockSearch('');
+        }}>
             <Text style={styles.modalClose}>✕</Text>
           </TouchableOpacity>
         </View>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search block..."
-          value={blockSearch}
-          onChangeText={setBlockSearch}
-        />
-        <ScrollView style={{ maxHeight: 400 }} keyboardShouldPersistTaps="handled">
-          {blocks
-            .filter(block => block.name.toLowerCase().includes(blockSearch.toLowerCase()))
-            .map(block => (
-              <TouchableOpacity
-                key={block.id}
-                style={styles.modalOption}
-                onPress={() => {
-                  setFormData({ ...formData, grievanceBlockId: block.id, grievanceWardId: '' });
-                  setShowBlockModal(false);
-                  setBlockSearch('');
-                }}
-              >
+        <TextInput style={styles.searchInput} placeholder="Search block..." value={blockSearch} onChangeText={setBlockSearch} />
+        <ScrollView style={{
+        maxHeight: 400
+      }} keyboardShouldPersistTaps="handled">
+          {blocks.filter(block => block.name.toLowerCase().includes(blockSearch.toLowerCase())).map(block => <TouchableOpacity key={block.id} style={styles.modalOption} onPress={() => {
+          setFormData({
+            ...formData,
+            grievanceBlockId: block.id,
+            grievanceWardId: ''
+          });
+          setShowBlockModal(false);
+          setBlockSearch('');
+        }}>
                 <Text style={styles.modalOptionText}>{block.name}</Text>
-              </TouchableOpacity>
-            ))}
+              </TouchableOpacity>)}
         </ScrollView>
       </KeyboardSafeModal>
 
       {/* Ward Modal */}
-      <KeyboardSafeModal
-        visible={showWardModal}
-        position="center"
-        onRequestClose={() => {
-          setShowWardModal(false);
-          setWardSearch('');
-        }}
-        closeOnBackdropPress={true}
-      >
+      <KeyboardSafeModal visible={showWardModal} position="center" onRequestClose={() => {
+      setShowWardModal(false);
+      setWardSearch('');
+    }} closeOnBackdropPress={true}>
         <View style={styles.modalHeader}>
           <Text style={styles.modalTitle}>{t('selectWard')}</Text>
           <TouchableOpacity onPress={() => {
-            setShowWardModal(false);
-            setWardSearch('');
-          }}>
+          setShowWardModal(false);
+          setWardSearch('');
+        }}>
             <Text style={styles.modalClose}>✕</Text>
           </TouchableOpacity>
         </View>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search ward..."
-          value={wardSearch}
-          onChangeText={setWardSearch}
-        />
-        <ScrollView style={{ maxHeight: 400 }} keyboardShouldPersistTaps="handled">
-          {wards
-            .filter(ward => ward.name.toLowerCase().includes(wardSearch.toLowerCase()))
-            .map(ward => (
-              <TouchableOpacity
-                key={ward.id}
-                style={styles.modalOption}
-                onPress={() => {
-                  setFormData({ ...formData, grievanceWardId: ward.id });
-                  setShowWardModal(false);
-                  setWardSearch('');
-                }}
-              >
+        <TextInput style={styles.searchInput} placeholder="Search ward..." value={wardSearch} onChangeText={setWardSearch} />
+        <ScrollView style={{
+        maxHeight: 400
+      }} keyboardShouldPersistTaps="handled">
+          {wards.filter(ward => ward.name.toLowerCase().includes(wardSearch.toLowerCase())).map(ward => <TouchableOpacity key={ward.id} style={styles.modalOption} onPress={() => {
+          setFormData({
+            ...formData,
+            grievanceWardId: ward.id
+          });
+          setShowWardModal(false);
+          setWardSearch('');
+        }}>
                 <Text style={styles.modalOptionText}>{ward.name}</Text>
-              </TouchableOpacity>
-            ))}
+              </TouchableOpacity>)}
         </ScrollView>
       </KeyboardSafeModal>
-    </SafeAreaView>
-  );
+    </SafeAreaView>;
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fad5a5',
+    backgroundColor: '#fad5a5'
   },
   header: {
     backgroundColor: '#D2691E',
     padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   backButton: {
     width: 36,
@@ -547,35 +423,35 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: 'white',
+    color: 'white'
   },
   keyboardAvoidingView: {
-    flex: 1,
+    flex: 1
   },
   content: {
     flex: 1,
     padding: 20,
-    paddingTop: 12,
+    paddingTop: 12
   },
   form: {
     backgroundColor: 'white',
     borderRadius: 12,
     padding: 20,
-    gap: 16,
+    gap: 16
   },
   inputGroup: {
-    marginBottom: 16,
+    marginBottom: 16
   },
   inputLabel: {
     fontSize: 14,
     fontWeight: '500',
     color: '#374151',
-    marginBottom: 6,
+    marginBottom: 6
   },
   input: {
     padding: 14,
@@ -583,20 +459,20 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#e5e7eb',
     fontSize: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   textArea: {
     minHeight: 120,
-    textAlignVertical: 'top',
+    textAlignVertical: 'top'
   },
   pickerContainer: {
     borderWidth: 2,
     borderColor: '#e5e7eb',
     borderRadius: 8,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   picker: {
-    height: 50,
+    height: 50
   },
   uploadButton: {
     padding: 14,
@@ -606,80 +482,80 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#ffffff',
-    gap: 8,
+    gap: 8
   },
   uploadText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#6b7280'
   },
   submitButton: {
     padding: 16,
     borderRadius: 8,
     backgroundColor: '#8B4513',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 20
   },
   disabledButton: {
     backgroundColor: '#9ca3af',
-    opacity: 0.6,
+    opacity: 0.6
   },
   submitText: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   uploadModalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   uploadModalContent: {
     backgroundColor: 'white',
     borderRadius: 16,
     padding: 24,
     width: '85%',
-    maxWidth: 400,
+    maxWidth: 400
   },
   uploadModalTitle: {
     fontSize: 20,
     fontWeight: '600',
     color: '#111827',
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   uploadModalSubtitle: {
     fontSize: 14,
     color: '#6b7280',
     marginBottom: 24,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   uploadOptionButton: {
     backgroundColor: '#8b4513',
     borderRadius: 8,
     padding: 16,
     marginBottom: 12,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   uploadOptionText: {
     color: 'white',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   uploadCancelButton: {
     backgroundColor: '#f3f4f6',
     borderRadius: 8,
     padding: 16,
     marginTop: 8,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   uploadCancelText: {
     color: '#6b7280',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   languageToggle: {
-    marginLeft: 'auto',
+    marginLeft: 'auto'
   },
   selectButton: {
     padding: 14,
@@ -687,21 +563,21 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#e5e7eb',
     backgroundColor: '#ffffff',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   selectText: {
     fontSize: 16,
-    color: '#9ca3af',
+    color: '#9ca3af'
   },
   selectTextFilled: {
     fontSize: 16,
-    color: '#111827',
+    color: '#111827'
   },
   noteText: {
     fontSize: 12,
     color: '#EF4444',
     marginTop: 4,
-    fontStyle: 'italic',
+    fontStyle: 'italic'
   },
   modalHeader: {
     flexDirection: 'row',
@@ -709,16 +585,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: '#E5E7EB'
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1F2937',
+    color: '#1F2937'
   },
   modalClose: {
     fontSize: 24,
-    color: '#6B7280',
+    color: '#6B7280'
   },
   searchInput: {
     margin: 16,
@@ -728,17 +604,17 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
     borderRadius: 8,
     fontSize: 14,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#F9FAFB'
   },
   modalOption: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: '#F3F4F6'
   },
   modalOptionText: {
     fontSize: 16,
-    color: '#374151',
-  },
+    color: '#374151'
+  }
 });
-
 export default SubmitGrievanceScreen;
+

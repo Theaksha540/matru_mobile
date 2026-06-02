@@ -2,7 +2,7 @@
   "expo": {
     "name": "Nirikhyana Puri",
     "slug": "NIRIKHYANA-PURI",
-    "version": "2.4.0",
+    "version": "3.1.0",
     "orientation": "portrait",
     "icon": "./assets/image/Nirikhyana_Puri_Icon.png",
     "userInterfaceStyle": "light",
@@ -19,10 +19,6 @@
         "foregroundImage": "./assets/image/Nirikhyana_Puri_Icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": [
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
-      ],
       "package": "com.akshay1998.NIRIKHYANAPURI",
       "runtimeVersion": {
         "policy": "appVersion"
@@ -44,22 +40,6 @@
       "expo-updates",
       "expo-sqlite",
       "expo-secure-store",
-      [
-        "expo-media-library",
-        {
-          "photosPermission": "Allow access to save and upload files",
-          "savePhotosPermission": "Allow access to save files",
-          "isAccessMediaLocationEnabled": false,
-          "granularPermissions": [
-            "photo",
-            "video"
-          ],
-          "androidPermissions": [
-            "READ_MEDIA_IMAGES",
-            "READ_MEDIA_VIDEO"
-          ]
-        }
-      ],
       "expo-web-browser"
     ],
     "extra": {
